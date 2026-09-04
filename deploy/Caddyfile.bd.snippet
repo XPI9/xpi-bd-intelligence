@@ -1,0 +1,16 @@
+# ─────────────────────────────────────────────────────────────
+#  ADD THIS BLOCK to /opt/xpi-schedule/caddy/Caddyfile
+#  (append at the end — do NOT change anything already in the file)
+#  Then validate + reload Caddy (see DEPLOY-VPS.md step 6).
+# ─────────────────────────────────────────────────────────────
+
+bd.xpisolutions.com {
+    encode gzip
+    reverse_proxy 172.18.0.1:3200
+}
+
+# Optional — the white-label CORE app (only if you run xpi-bd-core):
+# bdcore.xpisolutions.com {
+#     encode gzip
+#     reverse_proxy 172.18.0.1:3201
+# }

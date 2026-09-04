@@ -1,0 +1,33 @@
+# XPI BD Intelligence — VPS compose (runs ALONGSIDE xpi-schedule, never touches it)
+# Binds ONLY to the Docker bridge (172.18.0.1) so Caddy can reach it but the public
+# internet cannot (ufw allows only 22/80/443). Caddy reverse-proxies the subdomain to it.
+#
+# Two apps, two ports:
+#   xpi-bd       (XPI catalog)      -> 172.18.0.1:3200
+#   xpi-bd-core  (white-label core) -> 172.18.0.1:3201   (optional, second subdomain)
+
+name: xpi-bd
+
+services:
+  xpi-bd:
+    build: .
+    container_name: xpi-bd
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      BD_PROFILE: xpi
+      PORT: "3000"
+    ports:
+      - "172.18.0.1:3200:3000"
+
+  # Optional white-label CORE app on its own subdomain. Uncomment to run it too.
+  # xpi-bd-core:
+  #   build: .
+  #   container_name: xpi-bd-core
+  #   restart: unless-stopped
+  #   env_file: .env
+  #   environment:
+  #     BD_PROFILE: core
+  #     PORT: "3000"
+  #   ports:
+  #     - "172.18.0.1:3201:3000"

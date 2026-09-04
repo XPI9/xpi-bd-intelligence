@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>XPI BD Intelligence</title>
+<meta name="description" content="XPI BD Intelligence — capture any business and get AI-researched, evidence-backed sales opportunities. White-label ready.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0A0E15">
+<meta property="og:title" content="XPI BD Intelligence">
+<meta property="og:description" content="See the opportunity before you make the pitch.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --ink:#E9EDF3; --surface:#FFFFFF; --surface-2:#F3F6FB; --surface-3:#EAF0F7;
+  --line:#D9E1EC; --line-soft:#E7ECF3;
+  --text:#131A24; --muted:#5A6879; --faint:#8592A4;
+  --accent:#B96C05; --accent-soft:#F6E7CE;
+  --verified:#0E9E6E; --verified-bg:#E1F5EC;
+  --infer:#2563EB; --infer-bg:#E4EDFF;
+  --hypo:#7C3AED; --hypo-bg:#EEE8FF;
+  --crit:#D0342C; --crit-bg:#FBE6E4;
+  --ring-track:#E4EAF2;
+  --shadow:0 1px 2px rgba(15,25,40,.06), 0 8px 30px rgba(15,25,40,.08);
+  --frame:#C4CDDA; --frame-2:#AAB6C6;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ink:#080B11; --surface:#121A26; --surface-2:#1A2432; --surface-3:#212D3D;
+    --line:#2A3746; --line-soft:#212D3B;
+    --text:#E9EEF5; --muted:#93A2B6; --faint:#6B7A8E;
+    --accent:#F2A93B; --accent-soft:#3A2E17;
+    --verified:#34D399; --verified-bg:#0E2A22;
+    --infer:#63A4FF; --infer-bg:#122036;
+    --hypo:#A78BFA; --hypo-bg:#221B3A;
+    --crit:#F87171; --crit-bg:#301717;
+    --ring-track:#26313F;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 18px 50px rgba(0,0,0,.45);
+    --frame:#2B3644; --frame-2:#3A4657;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#080B11; --surface:#121A26; --surface-2:#1A2432; --surface-3:#212D3D;
+  --line:#2A3746; --line-soft:#212D3B;
+  --text:#E9EEF5; --muted:#93A2B6; --faint:#6B7A8E;
+  --accent:#F2A93B; --accent-soft:#3A2E17;
+  --verified:#34D399; --verified-bg:#0E2A22;
+  --infer:#63A4FF; --infer-bg:#122036;
+  --hypo:#A78BFA; --hypo-bg:#221B3A;
+  --crit:#F87171; --crit-bg:#301717;
+  --ring-track:#26313F;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 18px 50px rgba(0,0,0,.45);
+  --frame:#2B3644; --frame-2:#3A4657;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:
+    radial-gradient(1100px 600px at 82% -8%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 60%),
+    radial-gradient(900px 620px at 10% 108%, color-mix(in srgb, var(--infer) 10%, transparent), transparent 55%),
+    var(--ink);
+  color:var(--text);
+  font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  line-height:1.5; -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+.wrap{max-width:1180px; margin:0 auto; padding:34px 22px 70px}
+
+/* ---------- page header ---------- */
+.masthead{display:flex; align-items:flex-start; justify-content:space-between; gap:20px; flex-wrap:wrap; margin-bottom:30px}
+.brand{display:flex; flex-direction:column; gap:10px; max-width:640px}
+.eyebrow{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--accent); font-weight:600}
+h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px,4.4vw,44px); letter-spacing:-.02em; line-height:1.02; margin:0; text-wrap:balance}
+.lede{color:var(--muted); font-size:clamp(14px,1.6vw,16px); max-width:60ch}
+.lede b{color:var(--text); font-weight:600}
+.head-right{display:flex; flex-direction:column; align-items:flex-end; gap:12px}
+.theme-btn{
+  appearance:none; border:1px solid var(--line); background:var(--surface); color:var(--muted);
+  font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  padding:8px 12px; border-radius:9px; cursor:pointer; display:flex; align-items:center; gap:7px;
+}
+.theme-btn:hover{color:var(--text); border-color:var(--faint)}
+.demo-tag{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); border:1px dashed var(--line); padding:6px 10px; border-radius:20px}
+
+.layout{display:grid; grid-template-columns:minmax(0,1fr) 330px; gap:38px; align-items:start}
+@media(max-width:920px){ .layout{grid-template-columns:1fr} .side{order:-1} }
+
+/* ---------- white-label switch ---------- */
+.wl{display:flex;flex-direction:column;align-items:center;gap:9px;margin-bottom:16px}
+.wl-lab{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.wl-seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:4px;gap:4px;box-shadow:var(--shadow)}
+.wl-seg button{appearance:none;border:none;background:none;cursor:pointer;font-family:"IBM Plex Sans";font-weight:600;font-size:12.5px;color:var(--muted);padding:8px 15px;border-radius:9px;display:flex;align-items:center;gap:8px;transition:background .15s,color .15s}
+.wl-seg button .sw{width:11px;height:11px;border-radius:50%;flex:none}
+.wl-seg button.on{background:var(--surface-3);color:var(--text)}
+.wl-note{font-size:11.5px;color:var(--muted);max-width:360px;text-align:center;line-height:1.45;margin-top:14px}
+.wl-note b{color:var(--text);font-weight:600}
+
+/* ---------- phone ---------- */
+.stage{display:flex; flex-direction:column; align-items:center}
+.phone{
+  width:392px; max-width:100%;
+  background:linear-gradient(160deg,var(--frame-2),var(--frame));
+  border-radius:44px; padding:11px;
+  box-shadow:var(--shadow);
+}
+.screen{
+  position:relative; background:var(--surface); border-radius:34px; overflow:hidden;
+  height:760px; display:flex; flex-direction:column;
+}
+.statusbar{
+  height:38px; flex:none; display:flex; align-items:center; justify-content:space-between;
+  padding:0 22px; font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--muted);
+}
+.statusbar .dots{display:flex; gap:4px; align-items:center}
+.statusbar .dots i{width:5px;height:5px;border-radius:50%;background:var(--faint);display:block}
+.appbar{
+  flex:none; padding:6px 18px 12px; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--line-soft);
+}
+.appbar .back{
+  width:32px;height:32px;border-radius:10px;border:1px solid var(--line); background:var(--surface-2);
+  display:none; align-items:center; justify-content:center; cursor:pointer; color:var(--text); flex:none;
+}
+.appbar .back svg{width:16px;height:16px}
+.appbar.can-back .back{display:flex}
+.appbar .mark{font-family:"Archivo";font-weight:800;font-size:15px;letter-spacing:-.01em}
+.appbar .mark span{color:var(--accent)}
+.appbar .sub{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.appbar .grow{flex:1}
+.appbar .badge{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--muted);border:1px solid var(--line);padding:4px 8px;border-radius:20px}
+
+.view{flex:1; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch}
+.view::-webkit-scrollbar{width:8px}
+.view::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
+.pad{padding:18px 18px 30px}
+
+/* home */
+.hi{font-family:"Archivo";font-weight:700;font-size:22px;letter-spacing:-.01em;margin:2px 0 3px}
+.hi small{display:block;font-family:"IBM Plex Sans";font-weight:400;font-size:13px;color:var(--muted);letter-spacing:0;margin-top:4px}
+.section-h{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin:22px 2px 11px;display:flex;align-items:center;gap:8px}
+.section-h::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.cap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.cap{
+  background:var(--surface-2);border:1px solid var(--line-soft);border-radius:15px;padding:13px 9px 11px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;text-align:center;transition:transform .12s,border-color .12s;
+}
+.cap:hover{transform:translateY(-2px);border-color:var(--accent)}
+.cap .ic{width:34px;height:34px;border-radius:11px;background:var(--surface-3);display:flex;align-items:center;justify-content:center;color:var(--accent)}
+.cap .ic svg{width:19px;height:19px}
+.cap .lb{font-size:11.5px;font-weight:600;line-height:1.15}
+.cap .mini{font-family:"IBM Plex Mono",monospace;font-size:8.5px;color:var(--faint);letter-spacing:.05em}
+
+.urlbar{display:flex;gap:8px;margin-top:2px}
+.urlbar input{
+  flex:1;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px 13px;
+  color:var(--text);font-family:"IBM Plex Mono",monospace;font-size:12.5px;
+}
+.urlbar input::placeholder{color:var(--faint)}
+.urlbar input:focus{outline:2px solid color-mix(in srgb,var(--accent) 55%,transparent);outline-offset:1px;border-color:var(--accent)}
+.btn{
+  appearance:none;border:none;cursor:pointer;font-family:"IBM Plex Sans";font-weight:600;font-size:13px;
+  background:var(--accent);color:#fff;border-radius:12px;padding:0 16px;display:flex;align-items:center;justify-content:center;gap:7px;
+}
+:root[data-theme="dark"] .btn, :root:not([data-theme="light"]) .btn{color:#141007}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn{color:#141007}}
+.btn:hover{filter:brightness(1.06)}
+.btn.block{width:100%;padding:13px}
+.btn svg{width:15px;height:15px}
+
+.sample{
+  display:flex;align-items:center;gap:12px;background:var(--surface-2);border:1px solid var(--line-soft);
+  border-radius:15px;padding:12px 13px;cursor:pointer;transition:border-color .12s,transform .12s;margin-bottom:9px;
+}
+.sample:hover{border-color:var(--accent);transform:translateY(-1px)}
+.sample .logo{width:42px;height:42px;border-radius:12px;flex:none;display:flex;align-items:center;justify-content:center;font-family:"Archivo";font-weight:800;font-size:16px;color:#fff}
+.sample .info{flex:1;min-width:0}
+.sample .nm{font-weight:600;font-size:14px}
+.sample .mt{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sample .go{color:var(--faint)}
+.sample .go svg{width:18px;height:18px}
+
+/* research progress */
+.research-head{text-align:center;padding:8px 0 6px}
+.rh-name{font-family:"Archivo";font-weight:700;font-size:20px;margin-top:14px}
+.rh-sub{font-size:12.5px;color:var(--muted);margin-top:3px}
+.scanpulse{width:96px;height:96px;margin:8px auto 4px;position:relative}
+.scanpulse .core{position:absolute;inset:30px;border-radius:50%;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;color:var(--accent)}
+.scanpulse .core svg{width:24px;height:24px}
+.scanpulse .r{position:absolute;inset:0;border-radius:50%;border:2px solid var(--accent);opacity:0;animation:ping 2s ease-out infinite}
+.scanpulse .r:nth-child(2){animation-delay:.66s}
+.scanpulse .r:nth-child(3){animation-delay:1.33s}
+@keyframes ping{0%{transform:scale(.35);opacity:.7}100%{transform:scale(1);opacity:0}}
+.steps{margin-top:20px;display:flex;flex-direction:column;gap:2px}
+.step{display:flex;align-items:center;gap:12px;padding:11px 6px;border-radius:10px}
+.step .st{width:22px;height:22px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;border:2px solid var(--line);background:var(--surface)}
+.step .st svg{width:12px;height:12px}
+.step .lbl{font-size:13.5px;font-weight:500;color:var(--faint)}
+.step .meta{margin-left:auto;font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--faint);opacity:0}
+.step[data-s="active"] .st{border-color:var(--accent);color:var(--accent);animation:spin 1s linear infinite}
+.step[data-s="active"] .lbl{color:var(--text)}
+.step[data-s="done"] .st{border-color:var(--verified);background:var(--verified);color:#fff}
+.step[data-s="done"] .lbl{color:var(--text)}
+.step[data-s="done"] .meta{opacity:1}
+@keyframes spin{to{transform:rotate(360deg)}}
+.partial-note{margin-top:16px;background:var(--infer-bg);border:1px solid color-mix(in srgb,var(--infer) 30%,transparent);border-radius:12px;padding:11px 13px;font-size:12px;color:var(--text);display:flex;gap:9px;align-items:flex-start}
+.partial-note svg{width:16px;height:16px;color:var(--infer);flex:none;margin-top:1px}
+
+/* intelligence header */
+.iq-head{padding:16px 18px 14px;background:linear-gradient(180deg,var(--surface-2),var(--surface));border-bottom:1px solid var(--line-soft)}
+.iq-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.iq-name{font-family:"Archivo";font-weight:700;font-size:20px;letter-spacing:-.01em;line-height:1.05}
+.iq-loc{font-size:12px;color:var(--muted);margin-top:3px;display:flex;align-items:center;gap:6px}
+.conf-pill{font-family:"IBM Plex Mono",monospace;font-size:10px;padding:3px 8px;border-radius:20px;background:var(--verified-bg);color:var(--verified);font-weight:600;letter-spacing:.03em;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+.ring-wrap{display:flex;align-items:center;gap:16px;margin-top:16px}
+.ring{position:relative;width:92px;height:92px;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .num{font-family:"Archivo";font-weight:800;font-size:28px;line-height:1}
+.ring .of{font-family:"IBM Plex Mono",monospace;font-size:9px;color:var(--faint);letter-spacing:.1em}
+.rel-block{flex:1;min-width:0}
+.rel-lab{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:7px}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{font-size:11px;font-weight:600;padding:5px 9px;border-radius:8px;border:1px solid transparent;display:inline-flex;align-items:center;gap:5px}
+.pill.primary{background:var(--accent-soft);color:var(--accent);border-color:color-mix(in srgb,var(--accent) 32%,transparent)}
+.pill.sec{background:var(--surface-3);color:var(--text);border-color:var(--line)}
+.pill .dotv{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+/* tabs */
+.tabs{display:flex;gap:0;padding:0 4px;background:var(--surface);border-bottom:1px solid var(--line-soft);position:sticky;top:0;z-index:5;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1 1 auto;appearance:none;border:none;background:none;cursor:pointer;padding:12px 4px;font-family:"IBM Plex Sans";font-weight:600;font-size:11px;letter-spacing:-.01em;color:var(--faint);border-bottom:2px solid transparent;white-space:nowrap;text-align:center}
+.tab:hover{color:var(--text)}
+.tab.on{color:var(--text);border-bottom-color:var(--accent)}
+
+.tabpane{display:none}
+.tabpane.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* generic card */
+.card{background:var(--surface-2);border:1px solid var(--line-soft);border-radius:15px;padding:14px;margin-bottom:12px}
+.card-h{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.card-h .ic{color:var(--accent);display:flex}.card-h .ic svg{width:14px;height:14px}
+
+/* strategy blocks */
+.strat{padding:13px;border-radius:13px;background:var(--surface-2);border:1px solid var(--line-soft);margin-bottom:11px}
+.strat.primary{background:linear-gradient(180deg,var(--accent-soft),transparent);border-color:color-mix(in srgb,var(--accent) 30%,transparent)}
+.strat .k{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.strat .v{font-size:13.5px;margin-top:4px}
+.strat .v b{font-weight:700}
+
+/* score bars */
+.scorebar{margin-bottom:11px}
+.scorebar .row{display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:5px}
+.scorebar .row .lb{color:var(--muted);font-weight:500}
+.scorebar .row .nn{font-family:"IBM Plex Mono",monospace;font-weight:600;font-variant-numeric:tabular-nums}
+.track{height:7px;border-radius:6px;background:var(--ring-track);overflow:hidden}
+.track i{display:block;height:100%;border-radius:6px;background:var(--accent);transition:width .9s cubic-bezier(.2,.7,.2,1)}
+.track.tv i{background:var(--verified)}
+.track.ti i{background:var(--infer)}
+.track.tc i{background:var(--crit)}
+
+/* evidence */
+.claim{border:1px solid var(--line-soft);border-radius:14px;padding:12px 13px;margin-bottom:11px;background:var(--surface-2)}
+.claim-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.tier{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:3px 7px;border-radius:6px}
+.tier.verified{background:var(--verified-bg);color:var(--verified)}
+.tier.infer{background:var(--infer-bg);color:var(--infer)}
+.tier.hypo{background:var(--hypo-bg);color:var(--hypo)}
+.claim-conf{margin-left:auto;font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--muted);font-weight:600}
+.claim-txt{font-size:13.5px;line-height:1.45}
+.claim-ex{font-size:11.5px;color:var(--muted);font-style:italic;border-left:2px solid var(--line);padding-left:9px;margin-top:8px;line-height:1.4}
+.claim-src{display:flex;align-items:center;gap:6px;margin-top:9px;font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--faint);flex-wrap:wrap}
+.claim-src .chip{background:var(--surface-3);border-radius:6px;padding:2px 6px;display:inline-flex;align-items:center;gap:4px}
+.claim-src svg{width:11px;height:11px}
+
+/* opportunity */
+.opp{border:1px solid var(--line-soft);border-radius:15px;padding:0;overflow:hidden;margin-bottom:12px;background:var(--surface-2)}
+.opp-h{display:flex;align-items:center;gap:10px;padding:12px 13px;border-bottom:1px solid var(--line-soft)}
+.opp-h .rank{font-family:"Archivo";font-weight:800;font-size:13px;color:var(--accent);background:var(--accent-soft);width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none}
+.opp-h .ti{font-weight:700;font-size:14px;flex:1;line-height:1.15}
+.opp-h .pc{font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:600;color:var(--verified)}
+.opp-body{padding:12px 13px}
+.opp-row{display:flex;gap:9px;margin-bottom:9px}
+.opp-row:last-child{margin-bottom:0}
+.opp-row .rk{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);width:74px;flex:none;padding-top:2px}
+.opp-row .rv{font-size:12.5px;line-height:1.4}
+.opp-row .rv b{font-weight:600}
+.match-tag{display:inline-flex;align-items:center;gap:6px;background:var(--surface-3);border:1px solid var(--line);border-radius:8px;padding:5px 9px;font-size:12px;font-weight:600;margin-top:2px}
+.match-tag .pr{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--muted);font-weight:500}
+.statusline{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--faint);margin-top:10px;display:flex;align-items:center;gap:6px}
+.statusline .d{width:5px;height:5px;border-radius:50%;background:var(--verified)}
+
+/* NBA */
+.nba{background:linear-gradient(155deg,var(--accent-soft),transparent);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);border-radius:16px;padding:15px;margin-bottom:14px}
+.nba .tag{display:inline-flex;align-items:center;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:8px}
+.nba .tag svg{width:13px;height:13px}
+.nba .act{font-family:"Archivo";font-weight:700;font-size:17px;line-height:1.15}
+.nba .lead{font-size:13px;color:var(--text);margin-top:9px}
+.nba .lead b{font-weight:600}
+.nba .ask{font-size:13px;font-style:italic;background:var(--surface);border:1px solid var(--line-soft);border-radius:11px;padding:10px 12px;margin-top:10px;line-height:1.4}
+.nba .why{font-size:11.5px;color:var(--muted);margin-top:9px;display:flex;gap:7px;align-items:flex-start}
+.nba .why svg{width:13px;height:13px;color:var(--accent);flex:none;margin-top:2px}
+
+/* sales play */
+.play-item{margin-bottom:12px}
+.play-item .k{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);margin-bottom:5px}
+.play-item .v{font-size:13px;line-height:1.5}
+.play-item ul{margin:0;padding-left:17px}
+.play-item li{font-size:13px;margin-bottom:5px;line-height:1.4}
+.quote{font-style:italic;background:var(--surface);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:9px 12px;font-size:13px;line-height:1.45}
+
+/* timeline */
+.tl{position:relative;padding-left:8px}
+.tl-item{position:relative;padding:0 0 4px 26px;border-left:2px solid var(--line);margin-left:8px}
+.tl-item:last-child{border-left-color:transparent}
+.tl-item .dot{position:absolute;left:-7px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--surface);border:2px solid var(--accent)}
+.tl-item.done .dot{background:var(--verified);border-color:var(--verified)}
+.tl-item.next .dot{border-color:var(--accent);background:var(--accent-soft);animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 40%,transparent)}50%{box-shadow:0 0 0 5px transparent}}
+.tl-date{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.06em;color:var(--faint);text-transform:uppercase}
+.tl-ev{font-size:13.5px;font-weight:600;margin:2px 0}
+.tl-note{font-size:12px;color:var(--muted);padding-bottom:12px}
+
+.rev{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:2px}
+.rev .cell{background:var(--surface);border:1px solid var(--line-soft);border-radius:12px;padding:11px 12px}
+.rev .cell .n{font-family:"Archivo";font-weight:800;font-size:20px;font-variant-numeric:tabular-nums}
+.rev .cell .n.acc{color:var(--accent)}
+.rev .cell .n.ver{color:var(--verified)}
+.rev .cell .l{font-size:10.5px;color:var(--muted);margin-top:2px}
+
+/* side rail */
+.side{display:flex;flex-direction:column;gap:16px;position:sticky;top:24px}
+.rail{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow)}
+.rail h3{font-family:"Archivo";font-weight:700;font-size:15px;margin:0 0 4px}
+.rail .rl-sub{font-size:12.5px;color:var(--muted);margin-bottom:14px}
+.principle{display:flex;gap:11px;padding:10px 0;border-top:1px solid var(--line-soft)}
+.principle:first-of-type{border-top:none;padding-top:2px}
+.principle .pn{width:26px;height:26px;border-radius:8px;background:var(--surface-2);border:1px solid var(--line-soft);display:flex;align-items:center;justify-content:center;color:var(--accent);flex:none}
+.principle .pn svg{width:14px;height:14px}
+.principle .pt{font-weight:600;font-size:12.5px}
+.principle .pd{font-size:11.5px;color:var(--muted);line-height:1.4}
+.legend{display:flex;flex-direction:column;gap:9px}
+.legend .lg{display:flex;gap:10px;align-items:flex-start;font-size:11.5px}
+.legend .sw{width:12px;height:12px;border-radius:4px;flex:none;margin-top:2px}
+.legend .lg b{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;display:block}
+.legend .lg span{color:var(--muted)}
+.disclaimer{font-size:11px;color:var(--faint);line-height:1.5;border-top:1px solid var(--line-soft);padding-top:13px;margin-top:4px}
+
+.foot{text-align:center;margin-top:40px;font-size:11.5px;color:var(--faint);font-family:"IBM Plex Mono",monospace;letter-spacing:.04em}
+
+/* ---------- AVO ---------- */
+.avo-sub{font-size:11px;color:var(--muted);text-align:center;line-height:1.4;margin:8px 2px 4px}
+.avo-head{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--muted);margin:14px 2px 10px;line-height:1.35}
+.avo-head svg{width:18px;height:18px;color:var(--accent);flex:none}
+.avo-head b{color:var(--text);font-weight:600}
+.avo-card{padding:13px}
+.avo-best{position:relative;background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 34%,transparent);border-radius:12px;padding:12px 12px 11px;margin-bottom:8px}
+.avo-badge{display:inline-flex;align-items:center;gap:4px;font-family:"IBM Plex Mono",monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--accent);margin-bottom:7px}
+.avo-badge svg{width:11px;height:11px}
+.avo-score{float:right;font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+.avo-angle{font-weight:700;font-size:13px;margin-bottom:5px;padding-right:34px}
+.avo-q{font-style:italic;font-size:12.5px;line-height:1.45}
+.avo-subj{font-size:11.5px;font-weight:600;color:var(--muted);margin-bottom:4px}
+.avo-body{font-size:12.5px;line-height:1.45;white-space:pre-wrap}
+.avo-more{appearance:none;border:1px dashed var(--line);background:none;color:var(--muted);border-radius:9px;padding:8px 10px;font-size:12px;font-weight:500;cursor:pointer;width:100%}
+.avo-more:hover{color:var(--text);border-color:var(--faint)}
+.avo-alts{margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.avo-alt{position:relative;border:1px solid var(--line-soft);border-radius:11px;padding:11px;background:var(--surface)}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="masthead">
+    <div class="brand">
+      <div class="eyebrow" id="pgEyebrow">XPI Solutions · Product Demo</div>
+      <h1 class="title" id="pgTitle">XPI BD Intelligence</h1>
+      <p class="lede" id="pgLede">See the opportunity before you make the pitch. Capture any business, and the platform researches it, backs every finding with <b>evidence</b>, scores the opportunity, and tells your rep exactly what to do next. Tap a sample business to watch the flow.</p>
+    </div>
+    <div class="head-right">
+      <button class="theme-btn" id="themeBtn" aria-label="Toggle theme"><svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M6 6 4.5 4.5M19.5 19.5 18 18M18 6l1.5-1.5M4.5 19.5 6 18"/></svg><span id="themeLbl">Theme</span></button>
+      <span class="demo-tag">Interactive prototype · mock data</span>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="stage">
+      <div class="wl">
+        <div class="wl-lab">White-label preview</div>
+        <div class="wl-seg" id="wlSeg">
+          <button data-brand="xpi" class="on"><span class="sw" style="background:#F2A93B"></span>XPI</button>
+          <button data-brand="momentum"><span class="sw" style="background:#3B82F6"></span>Momentum BD</button>
+        </div>
+      </div>
+      <div class="phone">
+        <div class="screen">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="dots"><i></i><i></i><i></i></span>
+            <span>BD·OS</span>
+          </div>
+          <div class="appbar" id="appbar">
+            <div class="back" id="backBtn" role="button" tabindex="0" aria-label="Back">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>
+            </div>
+            <div>
+              <div class="mark">BD<span>·</span>Intel</div>
+              <div class="sub" id="appSub">Prospect Capture</div>
+            </div>
+            <div class="grow"></div>
+            <div class="badge" id="appBadge">Home</div>
+          </div>
+          <div class="view" id="view"><!-- screens injected --></div>
+        </div>
+      </div>
+      <div class="wl-note">Same engine, same research — <b>swap the brand color and the product catalog in seconds</b>. That’s how a BD agency runs it under their own name, for their own clients.</div>
+    </div>
+
+    <aside class="side">
+      <div class="rail">
+        <h3>Evidence before opinion</h3>
+        <div class="rl-sub">The one rule that separates this from “ask an AI about a business.” Every finding is tagged and sourced.</div>
+        <div class="legend">
+          <div class="lg"><span class="sw" style="background:var(--verified)"></span><div><b style="color:var(--verified)">Verified</b><span>Directly observed in a source — with URL, excerpt, timestamp.</span></div></div>
+          <div class="lg"><span class="sw" style="background:var(--infer)"></span><div><b style="color:var(--infer)">Inference</b><span>Strongly implied by evidence, but not stated outright.</span></div></div>
+          <div class="lg"><span class="sw" style="background:var(--hypo)"></span><div><b style="color:var(--hypo)">Hypothesis</b><span>A lead worth checking — never presented as fact.</span></div></div>
+        </div>
+      </div>
+
+      <div class="rail">
+        <h3>What the engine runs</h3>
+        <div class="rl-sub">Deterministic backend, AI on top — never the reverse.</div>
+        <div class="principle"><div class="pn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7 7 .5-5.5 4.5L18 21l-6-4-6 4 1.5-7L2 9.5 9 9z"/></svg></div><div><div class="pt">Multi-relationship scoring</div><div class="pd">A business isn’t just a lead — it may be a referral, partner, or vendor. All scored separately.</div></div></div>
+        <div class="principle"><div class="pn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 12l2 2 4-4"/></svg></div><div><div class="pt">Product match from catalog</div><div class="pd">The AI recommends — it never invents pricing. Every price comes from the XPI catalog.</div></div></div>
+        <div class="principle"><div class="pn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div><div class="pt">Guardrails, not autonomy</div><div class="pd">Agents research and draft. Sending, buying, and deleting stay behind human approval.</div></div></div>
+        <div class="disclaimer">Businesses, findings, scores and prices shown here are illustrative sample data for demonstration only — not real research output or quoted pricing.</div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="foot">CAPTURE → IDENTIFY → RESEARCH → VERIFY → SCORE → CLASSIFY → RECOMMEND → ENGAGE → CLOSE</div>
+</div>
+
+<script>
+/* ---------------- icons ---------------- */
+const I = {
+  card:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h5"/></svg>',
+  store:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l1-5h16l1 5M5 9v11h14V9M3 9h18"/><path d="M9 20v-6h6v6"/></svg>',
+  qr:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M20 14v.01M14 20v.01M20 20v.01M17 17v.01"/></svg>',
+  web:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg>',
+  name:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>',
+  voice:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/></svg>',
+  scan:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M3 12h18"/></svg>',
+  arrow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>',
+  loader:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3a9 9 0 1 0 9 9" stroke-linecap="round"/></svg>',
+  bolt:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>',
+  info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01"/></svg>',
+  link:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>',
+  clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>',
+  grid:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
+  doc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>',
+  chat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.5 7.2L3 21l1.8-6.5A8 8 0 1 1 21 12z"/></svg>',
+  avo:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="12" r="2.5"/><path d="M8 7l8 4M8 17l8-4"/></svg>',
+  star:'<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z"/></svg>',
+};
+
+/* ---------------- sample data ---------------- */
+const DB = {
+  legacy:{
+    color:'linear-gradient(135deg,#1F2937,#4B5563)', initials:'LC',
+    name:'Legacy Cuts', loc:'Plano, TX · Barbershop', vertical:'Barber',
+    identity:0.93, matched:['Business name','Address','Phone','Website domain'],
+    score:87,
+    relPrimary:'Referral Partner', relSecondary:['Direct Customer','Community'],
+    strat:{
+      primary:'Build the referral relationship first.',
+      primaryWhy:'Owner serves dozens of local small-business clients who match XPI’s ICP — the network is worth more than a single sale.',
+      secondary:'Then sell AI Concierge + SmartCard once trust is established.'
+    },
+    comps:[
+      {l:'Digital need',v:82,c:'v'},{l:'XPI product fit',v:94,c:'v'},
+      {l:'Direct revenue value',v:78,c:''},{l:'Referral value',v:91,c:'v'},
+      {l:'Partnership value',v:88,c:'v'},{l:'Decision-maker access',v:72,c:'i'},
+      {l:'Data confidence',v:90,c:'v'},{l:'Close difficulty',v:55,c:'c'}
+    ],
+    partial:false,
+    claims:[
+      {tier:'verified',conf:92,txt:'No online booking or “Book appointment” CTA was detected on the website.',ex:'“Call or walk in — 972-555-0148”',src:'legacycuts.com',stype:'Website',date:'Aug 19'},
+      {tier:'verified',conf:96,txt:'A single public phone number is the only contact route; no contact form or chat present.',ex:'Footer lists phone only across all pages.',src:'legacycuts.com',stype:'Website',date:'Aug 19'},
+      {tier:'verified',conf:88,txt:'147 Google reviews at a 4.8★ average — strong reputation, actively reviewed.',ex:'“4.8 · 147 Google reviews”',src:'Google Business',stype:'Reviews',date:'Aug 19'},
+      {tier:'infer',conf:79,txt:'After-hours and missed-call inquiries likely go uncaptured, since phone is the only channel.',ex:'Derived from single-channel finding above.',src:'Digital audit',stype:'Analysis',date:'Aug 19'},
+      {tier:'hypo',conf:54,txt:'Appointments may be handled manually in a paper book — worth confirming on the call.',ex:'No scheduling software signals found in page source.',src:'Digital audit',stype:'Analysis',date:'Aug 19'},
+    ],
+    opps:[
+      {rank:1,ti:'Missed-call & after-hours recovery',pc:'94%',finding:'Phone is the only contact channel; no form, chat, or booking.',impact:'New leads that call when nobody answers are likely lost with no follow-up.',pkey:'concierge',product:'Vicky AI Concierge',price:'$297/mo + $500 setup',status:'Verified finding · inferred impact'},
+      {rank:2,ti:'Online appointment capture',pc:'89%',finding:'No booking CTA detected anywhere on the site.',impact:'Customers must call to book, adding friction vs. competitors who book online.',pkey:'booking',product:'AI Concierge + Booking',price:'included w/ Concierge',status:'Verified finding · inferred impact'},
+      {rank:3,ti:'Review-to-referral engine',pc:'83%',finding:'4.8★ / 147 reviews but no visible review-request or referral flow.',impact:'A strong reputation is not being converted into new-customer referrals.',pkey:'reviews',product:'Review & Referral Engine',price:'$99/mo',status:'Verified finding · opportunity'},
+    ],
+    nba:{
+      act:'Call the owner',
+      lead:'Lead with <b>missed after-hours inquiries</b> — the highest-scoring opportunity.',
+      ask:'“When nobody’s at the chair to pick up the phone, what happens to that new customer?”',
+      avoid:'Don’t open with a website redesign — lead-response scored far higher and closes faster.'
+    },
+    play:{
+      opening:'“You’ve clearly earned the reputation — 147 reviews at 4.8 stars is rare. I want to make sure that reputation is actually turning into booked chairs.”',
+      discovery:['When you’re mid-cut and the phone rings, who answers?','Roughly how many calls come in after you close?','How do new clients book right now — call, walk-in, text?'],
+      value:'Vicky answers every call and after-hours message, books the appointment, and texts the client a confirmation — so a full chair never costs you the next customer.',
+      pkey:'concierge',product:'Vicky AI Concierge — $297/mo + $500 setup (sample catalog pricing)',
+      objection:['“I already have a system.” → Great — Vicky sits on top of it and only catches what falls through: the after-hours and missed calls.'],
+      close:'“Let’s put Vicky live on your line for two weeks and count the calls she catches that you’d have missed. If it’s not worth it, we shut it off.”'
+    },
+    bdplay:{
+      obj:'Develop a two-way referral partnership.',
+      why:'Legacy Cuts serves small-business owners all day in the chair — exactly XPI’s customer.',
+      opening:'“Honestly, I think there’s more here in us sending business to each other than in me just selling you something.”',
+      goal:'A 20-minute partnership conversation next week.'
+    },
+    timeline:[
+      {date:'Aug 19',ev:'Business captured',note:'Website URL entered by rep.',s:'done'},
+      {date:'Aug 19',ev:'Research completed',note:'4 sources, 5 evidence claims, BD score 87.',s:'done'},
+      {date:'—',ev:'Call owner',note:'Recommended next action, ready to log.',s:'next'},
+      {date:'—',ev:'Partnership meeting',note:'Secondary strategy goal.',s:''},
+      {date:'—',ev:'Concierge trial',note:'Two-week proof-of-value.',s:''},
+    ],
+    revenue:[{n:'$500',l:'Potential setup',c:'acc'},{n:'$495',l:'Potential MRR',c:'acc'},{n:'High',l:'Referral value',c:'ver'},{n:'90%',l:'Data confidence',c:'ver'}]
+  },
+
+  bright:{
+    color:'linear-gradient(135deg,#0E7490,#22C3B8)', initials:'BB',
+    name:'Bright Beginnings Academy', loc:'Frisco, TX · Childcare', vertical:'Daycare',
+    identity:0.88, matched:['Business name','Address','Phone'],
+    score:81,
+    relPrimary:'Direct Customer', relSecondary:['Enterprise (multi-site)'],
+    strat:{
+      primary:'Pursue as a direct customer — enrollment automation.',
+      primaryWhy:'Manual, paper-heavy intake is visible in their process and directly maps to XPI Enrollment Desk.',
+      secondary:'Two locations listed — flag as a multi-site expansion opportunity.'
+    },
+    comps:[
+      {l:'Digital need',v:86,c:'v'},{l:'XPI product fit',v:92,c:'v'},
+      {l:'Direct revenue value',v:80,c:''},{l:'Referral value',v:58,c:'i'},
+      {l:'Partnership value',v:49,c:'i'},{l:'Decision-maker access',v:68,c:'i'},
+      {l:'Data confidence',v:84,c:'v'},{l:'Close difficulty',v:61,c:'c'}
+    ],
+    partial:true,
+    claims:[
+      {tier:'verified',conf:90,txt:'Enrollment requires downloading a PDF packet and bringing it in signed.',ex:'“Download our enrollment forms and return them to the front desk.”',src:'brightbeginnings.com/enroll',stype:'Website',date:'Aug 19'},
+      {tier:'verified',conf:87,txt:'Tour requests route through a basic contact form with no scheduling.',ex:'“Fill out the form and we’ll get back to you about a tour.”',src:'brightbeginnings.com',stype:'Website',date:'Aug 19'},
+      {tier:'verified',conf:83,txt:'Two locations are listed (Frisco and McKinney).',ex:'“Now enrolling at both of our campuses.”',src:'brightbeginnings.com',stype:'Website',date:'Aug 19'},
+      {tier:'infer',conf:74,txt:'Parents likely re-enter the same information across multiple unsigned forms.',ex:'Derived from PDF-packet enrollment finding.',src:'Digital audit',stype:'Analysis',date:'Aug 19'},
+      {tier:'hypo',conf:48,txt:'Waitlist may be managed by hand — no waitlist signals detected.',ex:'Review research did not complete (source timeout).',src:'Digital audit',stype:'Analysis',date:'Aug 19'},
+    ],
+    opps:[
+      {rank:1,ti:'Digital enrollment packet',pc:'91%',finding:'Enrollment is a downloadable PDF returned in person.',impact:'Slow, error-prone intake; drop-off between interest and enrollment.',pkey:'enrollment',product:'XPI Enrollment Desk',price:'$199/mo + setup',status:'Verified finding · inferred impact'},
+      {rank:2,ti:'Tour scheduling automation',pc:'85%',finding:'Tour requests use a contact form with manual follow-up.',impact:'Prospective parents wait for a callback; some go elsewhere.',pkey:'concierge',product:'Vicky AI Concierge + Booking',price:'$297/mo',status:'Verified finding · inferred impact'},
+      {rank:3,ti:'Multi-site rollout',pc:'72%',finding:'Two campuses under one brand.',impact:'One deployment can serve both — larger contract value.',pkey:'enterprise',product:'Enterprise package',price:'from catalog',status:'Verified finding · opportunity'},
+    ],
+    nba:{
+      act:'Request an intro meeting with the director',
+      lead:'Lead with <b>enrollment paperwork</b> — the clearest, most concrete pain.',
+      ask:'“How much of your front-desk time each week goes into chasing down and re-keying enrollment forms?”',
+      avoid:'Don’t pitch multi-site first — earn the single-location win, then expand.'
+    },
+    play:{
+      opening:'“Every parent I talk to says the enrollment paperwork is the most painful part of switching daycares. It doesn’t have to be.”',
+      discovery:['Walk me through what a new family fills out today.','How many forms is that, and how many need signatures?','What happens if a parent forgets one?'],
+      value:'One guided packet replaces the whole stack — parents complete it on their phone, sign once, and it lands in your system with a signature trail.',
+      pkey:'enrollment',product:'XPI Enrollment Desk — $199/mo + setup (sample catalog pricing)',
+      objection:['“Parents are used to paper.” → They’re used to it because nobody’s offered better. The centers that switch see faster enrollments.'],
+      close:'“Let’s run one week of new inquiries through a digital packet and compare it to your paper process side by side.”'
+    },
+    bdplay:null,
+    timeline:[
+      {date:'Aug 19',ev:'Business captured',note:'Business name entered by rep.',s:'done'},
+      {date:'Aug 19',ev:'Research completed (partial)',note:'Review source timed out — results still delivered.',s:'done'},
+      {date:'—',ev:'Intro meeting',note:'Recommended next action.',s:'next'},
+      {date:'—',ev:'Enrollment demo',note:'Personalized packet.',s:''},
+    ],
+    revenue:[{n:'$199+',l:'Potential MRR',c:'acc'},{n:'2×',l:'Sites in play',c:'acc'},{n:'Med',l:'Referral value',c:''},{n:'84%',l:'Data confidence',c:'ver'}]
+  },
+
+  gulf:{
+    color:'linear-gradient(135deg,#7C2D12,#C2703B)', initials:'GC',
+    name:'Gulf Coast Insurance', loc:'New Orleans, LA · Insurance Agency', vertical:'Insurance',
+    identity:0.9, matched:['Business name','Domain','Phone','Address'],
+    score:84,
+    relPrimary:'Referral Partner', relSecondary:['Direct Customer','Strategic Partner'],
+    strat:{
+      primary:'Referral partner first — they touch the same SMB customers XPI wants.',
+      primaryWhy:'Independent agencies refer business services constantly; a partnership compounds over time.',
+      secondary:'Also a strong direct customer for quote-intake automation.'
+    },
+    comps:[
+      {l:'Digital need',v:77,c:''},{l:'XPI product fit',v:88,c:'v'},
+      {l:'Direct revenue value',v:74,c:''},{l:'Referral value',v:93,c:'v'},
+      {l:'Partnership value',v:90,c:'v'},{l:'Decision-maker access',v:66,c:'i'},
+      {l:'Data confidence',v:86,c:'v'},{l:'Close difficulty',v:58,c:'c'}
+    ],
+    partial:false,
+    claims:[
+      {tier:'verified',conf:89,txt:'Quote requests use a long web form that emails the agency; no routing or auto-response shown.',ex:'“Submit your details and an agent will contact you.”',src:'gulfcoastins.com/quote',stype:'Website',date:'Aug 19'},
+      {tier:'verified',conf:85,txt:'Multiple lines of business offered (auto, home, commercial, life).',ex:'“Personal & commercial coverage under one roof.”',src:'gulfcoastins.com',stype:'Website',date:'Aug 19'},
+      {tier:'verified',conf:80,txt:'Agency positions itself as locally owned and community-focused.',ex:'“Family-owned, serving Greater New Orleans since 2004.”',src:'gulfcoastins.com/about',stype:'Website',date:'Aug 19'},
+      {tier:'infer',conf:76,txt:'Cross-sell across lines likely depends on manual agent follow-up.',ex:'No portal or automated renewal/cross-sell signals detected.',src:'Digital audit',stype:'Analysis',date:'Aug 19'},
+      {tier:'hypo',conf:52,txt:'Referral relationships with local businesses may already exist informally.',ex:'“Community-focused” framing suggests a network to formalize.',src:'Digital audit',stype:'Analysis',date:'Aug 19'},
+    ],
+    opps:[
+      {rank:1,ti:'Referral partnership',pc:'93%',finding:'Community-focused agency touching the same SMB base as XPI.',impact:'A formal two-way referral channel compounds beyond any single sale.',pkey:'partner',product:'Partner Program',price:'—',status:'Verified finding · strategic opportunity'},
+      {rank:2,ti:'Quote-intake automation',pc:'86%',finding:'Long web form with manual, un-routed follow-up.',impact:'Slow first response; hot quote leads cool before an agent replies.',pkey:'intake',product:'FormLess Intake + Vicky',price:'$149/mo',status:'Verified finding · inferred impact'},
+      {rank:3,ti:'Cross-sell & renewal follow-up',pc:'78%',finding:'Multiple lines but no automated cross-sell/renewal flow.',impact:'Existing clients aren’t being nudged toward additional coverage.',pkey:'crm',product:'CRM + Follow-up Agent',price:'from catalog',status:'Verified finding · inferred impact'},
+    ],
+    nba:{
+      act:'Request an introduction / partnership chat',
+      lead:'Lead with <b>partnership</b>, not a product pitch — referral value scored highest.',
+      ask:'“How many of your clients ask you where to find good business services — and what do you tell them today?”',
+      avoid:'Don’t open by selling software; open by offering to send them business.'
+    },
+    play:{
+      opening:'“I don’t think the first conversation should be me selling you anything — I think we probably send each other customers.”',
+      discovery:['When a client needs a business service, do you have anyone you send them to?','How do new quote requests reach you right now?','How fast can you typically respond to a fresh lead?'],
+      value:'A referral partnership sends warm intros both directions; separately, FormLess routes and auto-responds to quote requests so a hot lead never waits.',
+      pkey:'intake',product:'Partner Program (referral) · FormLess Intake $149/mo (sample catalog pricing)',
+      objection:['“We already get referrals.” → Perfect — let’s make them two-way and consistent instead of occasional.'],
+      close:'“Let’s grab 20 minutes to map who we each already know. If there’s overlap, we both win.”'
+    },
+    bdplay:{
+      obj:'Formalize a two-way referral partnership.',
+      why:'Independent agencies are constant referrers of business services to the exact SMBs XPI serves.',
+      opening:'“I think there may be more opportunity for us to refer business to each other than for me to simply sell you something.”',
+      goal:'A 20-minute partnership meeting.'
+    },
+    timeline:[
+      {date:'Aug 19',ev:'Business captured',note:'Website URL entered by rep.',s:'done'},
+      {date:'Aug 19',ev:'Research completed',note:'5 sources, BD score 84, referral value 93.',s:'done'},
+      {date:'—',ev:'Partnership intro',note:'Recommended next action.',s:'next'},
+      {date:'—',ev:'Map shared network',note:'Referral overlap.',s:''},
+      {date:'—',ev:'Quote-intake pilot',note:'Secondary product play.',s:''},
+    ],
+    revenue:[{n:'$149+',l:'Potential MRR',c:'acc'},{n:'93',l:'Referral score',c:'ver'},{n:'High',l:'Partner value',c:'ver'},{n:'86%',l:'Data confidence',c:'ver'}]
+  }
+};
+
+/* ---------------- app state / render ---------------- */
+const view = document.getElementById('view');
+const appSub = document.getElementById('appSub');
+const appBadge = document.getElementById('appBadge');
+const appbar = document.getElementById('appbar');
+const backBtn = document.getElementById('backBtn');
+let current = null;
+
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function setChrome(sub,badge,back){ appSub.textContent=sub; appBadge.textContent=badge; appbar.classList.toggle('can-back',back); }
+backBtn.onclick = renderHome;
+backBtn.onkeydown = e=>{ if(e.key==='Enter'||e.key===' ') renderHome(); };
+
+/* ---------- HOME ---------- */
+function renderHome(){
+  current=null;
+  setChrome('Prospect Capture','Home',false);
+  view.innerHTML = `
+  <div class="pad">
+    <div class="hi">Capture a business<small>Any input becomes an evidence-backed prospect.</small></div>
+    <div class="section-h">Capture method</div>
+    <div class="cap-grid">
+      ${capBtn('card','Business card','OCR')}
+      ${capBtn('store','Storefront','Vision')}
+      ${capBtn('qr','QR code','Safe-parse')}
+      ${capBtn('web','Website','Live')}
+      ${capBtn('name','Business name','Search')}
+      ${capBtn('voice','Voice','Dictate')}
+    </div>
+    <div class="section-h">Enter a website</div>
+    <div class="urlbar">
+      <input id="urlIn" placeholder="legacycuts.com" autocomplete="off" spellcheck="false">
+      <button class="btn" id="urlGo">Analyze</button>
+    </div>
+    <div class="section-h">Try a sample business</div>
+    ${sampleRow('legacy')}
+    ${sampleRow('bright')}
+    ${sampleRow('gulf')}
+    <div class="section-h">Samples run instantly (offline). Website / card / name run <b style="color:var(--accent);font-weight:600">live AI research</b>.</div>
+    <input id="cardFile" type="file" accept="image/*" style="display:none">
+  </div>`;
+
+  view.querySelectorAll('[data-cap]').forEach(el=>{
+    el.onclick=()=>{ const k=el.dataset.cap;
+      if(k==='web'||k==='name'){ document.getElementById('urlIn').focus(); }
+      else if(k==='card'||k==='store'){ document.getElementById('cardFile').click(); }
+      else { flash(el); }
+    };
+  });
+  view.querySelectorAll('[data-sample]').forEach(el=> el.onclick=()=> startSample(el.dataset.sample));
+  const go=document.getElementById('urlGo'), inp=document.getElementById('urlIn');
+  const runUrl=()=>{ const v=(inp.value||'').trim(); if(!v) return; const looksUrl=/\./.test(v)&&!/\s/.test(v); startLive({ name: looksUrl?'':v, url: looksUrl?v:'' }); };
+  go.onclick=runUrl; inp.onkeydown=e=>{ if(e.key==='Enter') runUrl(); };
+  const cf=document.getElementById('cardFile'); if(cf) cf.onchange=e=>{ const f=e.target.files&&e.target.files[0]; if(f) startCard(f); e.target.value=''; };
+}
+function capBtn(k,lb,mini){ return `<div class="cap" data-cap="${k}"><div class="ic">${I[k]}</div><div class="lb">${lb}</div><div class="mini">${mini}</div></div>`; }
+function sampleRow(id){ const b=DB[id]; return `<div class="sample" data-sample="${id}"><div class="logo" style="background:${b.color}">${b.initials}</div><div class="info"><div class="nm">${b.name}</div><div class="mt">${b.loc}</div></div><div class="go">${I.arrow}</div></div>`; }
+function flash(el){ el.style.borderColor='var(--accent)'; setTimeout(()=>el.style.borderColor='',400); }
+
+/* ---------- RESEARCH ---------- */
+const LIVE_STEPS=['Reading input','Resolving identity','Fetching website (safe)','Web search','Collecting evidence','Scoring opportunity','BD strategy'];
+const CARD_STEPS=['Reading business card','Resolving identity','Fetching website (safe)','Web search','Collecting evidence','Scoring opportunity','BD strategy'];
+const SAMPLE_STEPS=['Reading capture','Resolving identity','Fetching website (safe)','Digital audit','Collecting evidence','Scoring opportunity','BD strategy'];
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function startSample(id){ const b=DB[id]; showResearch({ name:b.name, sub:b.loc, steps:SAMPLE_STEPS, id, dataPromise:Promise.resolve(b) }); }
+
+function startLive({name,url}){
+  const disp=name||url;
+  const p=fetch('/api/research',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,url})})
+    .then(r=>r.json()).then(d=>{ if(d.error) throw new Error(d.message||d.error); return d; });
+  showResearch({ name:disp, sub:'Live AI research', steps:LIVE_STEPS, id:'_live', dataPromise:p });
+}
+
+async function startCard(file){
+  let b64; try{ b64=await fileToBase64(file); }catch(e){ return showError('Could not read that image.'); }
+  const mediaType=file.type||'image/jpeg';
+  const p=fetch('/api/extract',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imageBase64:b64,mediaType})})
+    .then(r=>r.json()).then(fields=>{ if(fields.error) throw new Error(fields.message||fields.error);
+      const nm=fields.company||fields.name||''; const url=fields.website||'';
+      if(!nm && !url) throw new Error('No business name or website could be read from that card.');
+      return fetch('/api/research',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:nm,url})})
+        .then(r=>r.json()).then(d=>{ if(d.error) throw new Error(d.message||d.error); return d; });
+    });
+  showResearch({ name:'Business card', sub:'Reading card…', steps:CARD_STEPS, id:'_live', dataPromise:p });
+}
+function fileToBase64(file){ return new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(String(fr.result).split(',')[1]); fr.onerror=rej; fr.readAsDataURL(file); }); }
+
+async function showResearch({name,sub,steps,id,dataPromise}){
+  setChrome('Researching','Live',false);
+  view.innerHTML=`<div class="pad">
+    <div class="research-head">
+      <div class="scanpulse"><span class="r"></span><span class="r"></span><span class="r"></span><span class="core">${I.scan}</span></div>
+      <div class="rh-name">${esc(name)}</div>
+      <div class="rh-sub">${esc(sub||'')}</div>
+    </div>
+    <div class="steps" id="steps">
+      ${steps.map((l)=>`<div class="step" data-s="idle"><span class="st">${I.loader}</span><span class="lbl">${l}</span><span class="meta"></span></div>`).join('')}
+    </div>
+  </div>`;
+  let data=null, err=null;
+  dataPromise.then(d=>{data=d;}).catch(e=>{err=e;});
+  const els=[...view.querySelectorAll('.step')];
+  const delay=reduce?70:520;
+  for(let i=0;i<els.length;i++){
+    els[i].dataset.s='active';
+    await sleep(delay);
+    if(i===els.length-1){ while(!data && !err){ await sleep(150); } }
+    els[i].dataset.s='done'; const st=els[i].querySelector('.st'); if(st) st.innerHTML=I.check;
+  }
+  while(!data && !err){ await sleep(150); }
+  if(err){ showError(err.message||'Research failed.'); return; }
+  DB[id]=data; renderIntel(id);
+}
+
+function showError(msg){
+  setChrome('Research','Home',false);
+  view.innerHTML=`<div class="pad">
+    <div class="card" style="border-color:var(--crit);background:var(--crit-bg)">
+      <div class="card-h" style="color:var(--crit)"><span class="ic">${I.info}</span>Research could not complete</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.5">${esc(msg)}</div>
+    </div>
+    <button class="btn block" id="errBack">Back to capture</button>
+  </div>`;
+  const bb=document.getElementById('errBack'); if(bb) bb.onclick=renderHome;
+}
+
+/* ---------- INTELLIGENCE ---------- */
+const TABS=[['overview','Overview'],['evidence','Evidence'],['opps','Opportunities'],['strategy','Strategy'],['timeline','Timeline']];
+function renderIntel(id){
+  const b=DB[id]; current=id;
+  setChrome('Prospect Intelligence','BD '+b.score,true);
+  const circ=2*Math.PI*40; const off=circ*(1-b.score/100);
+  view.innerHTML=`
+    <div class="iq-head">
+      <div class="iq-top">
+        <div>
+          <div class="iq-name">${b.name}</div>
+          <div class="iq-loc">${b.loc}</div>
+        </div>
+        <div class="conf-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="11" height="11"><path d="M20 6L9 17l-5-5"/></svg>ID ${(b.identity*100).toFixed(0)}%</div>
+      </div>
+      <div class="ring-wrap">
+        <div class="ring">
+          <svg width="92" height="92"><circle cx="46" cy="46" r="40" stroke="var(--ring-track)" stroke-width="8" fill="none"/><circle cx="46" cy="46" r="40" stroke="var(--accent)" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${circ}" id="ringArc"/></svg>
+          <div class="val"><div class="num">${b.score}</div><div class="of">BD SCORE</div></div>
+        </div>
+        <div class="rel-block">
+          <div class="rel-lab">Relationship classification</div>
+          <div class="pills">
+            <span class="pill primary"><span class="dotv"></span>${b.relPrimary}</span>
+            ${b.relSecondary.map(r=>`<span class="pill sec">${r}</span>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tabs" id="tabs">${TABS.map((t,i)=>`<button class="tab ${i===0?'on':''}" data-tab="${t[0]}">${t[1]}</button>`).join('')}</div>
+    <div class="pad" id="pane"></div>`;
+
+  requestAnimationFrame(()=>{ const arc=document.getElementById('ringArc'); if(arc){ arc.style.transition=reduce?'none':'stroke-dashoffset 1s cubic-bezier(.2,.7,.2,1)'; arc.style.strokeDashoffset=off; } });
+  view.querySelectorAll('.tab').forEach(t=> t.onclick=()=>{ view.querySelectorAll('.tab').forEach(x=>x.classList.remove('on')); t.classList.add('on'); paint(id,t.dataset.tab); });
+  paint(id,'overview');
+}
+
+function paint(id,tab){
+  const b=DB[id]; const p=document.getElementById('pane');
+  if(tab==='overview') p.innerHTML=ovHTML(b);
+  else if(tab==='evidence') p.innerHTML=evHTML(b);
+  else if(tab==='opps') p.innerHTML=oppHTML(b);
+  else if(tab==='strategy') p.innerHTML=stratHTML(b);
+  else if(tab==='timeline') p.innerHTML=tlHTML(b);
+  if(tab==='overview'){ requestAnimationFrame(()=>{ p.querySelectorAll('.track i').forEach(el=>{ el.style.width=el.dataset.w+'%'; }); }); }
+  if(tab==='strategy'){ const ab=document.getElementById('avoBtn'); if(ab) ab.onclick=()=>runAVO(id); }
+  p.scrollIntoView?null:null;
+  view.scrollTop = view.scrollTop; // keep position
+}
+
+/* ---------- Agentic Variation Operators (AVO) ---------- */
+async function runAVO(id){
+  const btn=document.getElementById('avoBtn'), out=document.getElementById('avoOut');
+  if(!btn||!out) return;
+  const orig=btn.innerHTML; btn.disabled=true; btn.innerHTML=I.loader+' Generating variations…';
+  out.innerHTML='';
+  try{
+    const r=await fetch('/api/variations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({intel:DB[id]})});
+    const d=await r.json(); if(d.error) throw new Error(d.message||d.error);
+    DB[id]._avo=d; out.innerHTML=avoHTML(d); wireAvo(); btn.style.display='none';
+  }catch(e){
+    out.innerHTML=`<div class="card" style="border-color:var(--crit);background:var(--crit-bg)"><div style="font-size:13px;color:var(--text)">${esc(e.message||'Could not generate variations.')}</div></div>`;
+    btn.disabled=false; btn.innerHTML=orig;
+  }
+}
+function avoScore(v){ return `<span class="avo-score">${v.score}</span>`; }
+function avoBadge(){ return `<span class="avo-badge">${I.star} Best</span>`; }
+function avoBlock(title,icon,items,renderItem){
+  if(!items||!items.length) return '';
+  const best=items.find(x=>x.best)||items[0];
+  const alts=items.filter(x=>x!==best);
+  return `<div class="card avo-card">
+    <div class="card-h"><span class="ic">${icon}</span>${title}</div>
+    <div class="avo-best">${avoBadge()}${avoScore(best)}${renderItem(best)}</div>
+    ${alts.length?`<button class="avo-more" data-toggle>▾ ${alts.length} alternate${alts.length>1?'s':''}</button>
+      <div class="avo-alts" hidden>${alts.map(a=>`<div class="avo-alt">${avoScore(a)}${renderItem(a)}</div>`).join('')}</div>`:''}
+  </div>`;
+}
+function avoHTML(d){
+  const pitch=avoBlock('Pitch angle',I.chat,d.pitch,v=>`<div class="avo-angle">${esc(v.angle)}</div><div class="avo-q">${esc(v.opening)}</div>`);
+  const outreach=avoBlock('Outreach draft',I.doc,d.outreach,v=>`<div class="avo-angle">${esc(v.channel)} · ${esc(v.label)}</div>${v.subject?`<div class="avo-subj">Subject: ${esc(v.subject)}</div>`:''}<div class="avo-body">${esc(v.body)}</div>`);
+  const strat=avoBlock('Strategy',I.target,d.strategy,v=>`<div class="avo-angle">${esc(v.label)}</div><div class="avo-q" style="font-style:normal">${esc(v.rationale)}</div>`);
+  const nba=avoBlock('Next best action',I.bolt,d.nba,v=>`<div class="avo-angle">${esc(v.action)}</div><div class="avo-q" style="font-style:normal">${esc(v.why)}</div>`);
+  return `<div class="avo-head">${I.avo}<span>Agentic Variation Operators — <b>best of each, alternates one tap away</b></span></div>${pitch}${outreach}${strat}${nba}`;
+}
+function wireAvo(){
+  document.querySelectorAll('#avoOut [data-toggle]').forEach(b=>b.onclick=()=>{
+    const alts=b.nextElementSibling; if(!alts) return;
+    const hidden=alts.hasAttribute('hidden');
+    if(hidden){ alts.removeAttribute('hidden'); b.textContent='▴ hide alternates'; }
+    else { alts.setAttribute('hidden',''); b.textContent='▾ '+alts.children.length+' alternate'+(alts.children.length>1?'s':''); }
+  });
+}
+
+function ovHTML(b){
+  return `
+  <div class="strat primary"><div class="k">Primary strategy</div><div class="v"><b>${b.strat.primary}</b></div><div class="v" style="color:var(--muted);font-size:12px;margin-top:6px">${b.strat.primaryWhy}</div></div>
+  <div class="strat"><div class="k">Secondary strategy</div><div class="v">${b.strat.secondary}</div></div>
+  <div class="card">
+    <div class="card-h"><span class="ic">${I.grid}</span>Score breakdown</div>
+    ${b.comps.map(c=>`<div class="scorebar"><div class="row"><span class="lb">${c.l}</span><span class="nn">${c.v}</span></div><div class="track ${c.c==='v'?'tv':c.c==='i'?'ti':c.c==='c'?'tc':''}"><i data-w="${c.v}" style="width:0"></i></div></div>`).join('')}
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);margin-top:4px">Formula v1.3 · component-weighted · close difficulty inverse-scaled</div>
+  </div>
+  <div class="card">
+    <div class="card-h"><span class="ic">${I.target}</span>Revenue snapshot</div>
+    <div class="rev">${b.revenue.map(r=>`<div class="cell"><div class="n ${r.c}">${r.n}</div><div class="l">${r.l}</div></div>`).join('')}</div>
+  </div>
+  <div class="card">
+    <div class="card-h"><span class="ic">${I.check}</span>Identity resolution</div>
+    <div style="font-size:12.5px;color:var(--muted);line-height:1.5">Matched at <b style="color:var(--verified)">${(b.identity*100).toFixed(0)}% confidence</b> on: ${b.matched.join(' · ')}. Above threshold — research proceeded automatically.</div>
+  </div>`;
+}
+function evHTML(b){
+  return `<div style="font-size:12px;color:var(--muted);margin-bottom:12px">Every finding below carries a source, an excerpt, a timestamp and a confidence. Nothing is presented as fact without it.</div>` +
+  b.claims.map(c=>`
+  <div class="claim">
+    <div class="claim-top"><span class="tier ${c.tier==='verified'?'verified':c.tier==='infer'?'infer':'hypo'}">${c.tier==='verified'?'Verified':c.tier==='infer'?'Inference':'Hypothesis'}</span><span class="claim-conf">${c.conf}%</span></div>
+    <div class="claim-txt">${c.txt}</div>
+    <div class="claim-ex">${c.ex}</div>
+    <div class="claim-src"><span class="chip">${I.link}${c.src}</span><span class="chip">${c.stype}</span><span class="chip">${I.clock}${c.date}</span></div>
+  </div>`).join('');
+}
+function oppHTML(b){
+  return b.opps.map(o=>`
+  <div class="opp">
+    <div class="opp-h"><span class="rank">${o.rank}</span><span class="ti">${o.ti}</span><span class="pc">${o.pc}</span></div>
+    <div class="opp-body">
+      <div class="opp-row"><span class="rk">Finding</span><span class="rv">${o.finding}</span></div>
+      <div class="opp-row"><span class="rk">Impact</span><span class="rv">${o.impact}</span></div>
+      <div class="opp-row"><span class="rk">${catLabel()}</span><span class="rv"><span class="match-tag">${I.bolt}${prodFor(o).n}<span class="pr">${prodFor(o).p}</span></span></span></div>
+      <div class="statusline"><span class="d"></span>${o.status}</div>
+    </div>
+  </div>`).join('');
+}
+function stratHTML(b){
+  let html=`
+  <div class="nba">
+    <div class="tag">${I.bolt} Next best action</div>
+    <div class="act">${b.nba.act}</div>
+    <div class="lead">${b.nba.lead}</div>
+    <div class="ask">${b.nba.ask}</div>
+    <div class="why">${I.info}<span>${b.nba.avoid}</span></div>
+  </div>`;
+  if(b.bdplay){
+    html+=`<div class="card">
+      <div class="card-h"><span class="ic">${I.target}</span>BD / partnership play</div>
+      <div class="play-item"><div class="k">Objective</div><div class="v"><b>${b.bdplay.obj}</b></div></div>
+      <div class="play-item"><div class="k">Why</div><div class="v">${b.bdplay.why}</div></div>
+      <div class="play-item"><div class="k">Opening</div><div class="quote">${b.bdplay.opening}</div></div>
+      <div class="play-item"><div class="k">Next goal</div><div class="v">${b.bdplay.goal}</div></div>
+    </div>`;
+  }
+  html+=`<div class="card">
+    <div class="card-h"><span class="ic">${I.chat}</span>Sales play</div>
+    <div class="play-item"><div class="k">Opening</div><div class="quote">${b.play.opening}</div></div>
+    <div class="play-item"><div class="k">Discovery questions</div><div class="v"><ul>${b.play.discovery.map(q=>`<li>${q}</li>`).join('')}</ul></div></div>
+    <div class="play-item"><div class="k">Value proposition</div><div class="v">${b.play.value}</div></div>
+    <div class="play-item"><div class="k">Product recommendation</div><div class="v"><span class="match-tag">${I.bolt}${playProd(b)}</span></div></div>
+    <div class="play-item"><div class="k">Objection handling</div><div class="v"><ul>${b.play.objection.map(q=>`<li>${q}</li>`).join('')}</ul></div></div>
+    <div class="play-item"><div class="k">Close</div><div class="quote">${b.play.close}</div></div>
+  </div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);text-align:center;padding:4px 0 8px">Draft generated from evidence + vertical playbook + catalog · rep edits before use</div>
+  <button class="btn block" id="avoBtn" style="margin-top:2px">${I.avo} Agentic Variation Operators</button>
+  <div class="avo-sub">Generate multiple pitch, outreach, strategy &amp; next-action variations — an evaluator auto-picks the best of each.</div>
+  <div id="avoOut"></div>`;
+  return html;
+}
+function tlHTML(b){
+  return `<div class="card" style="background:transparent;border:none;padding:4px 0">
+    <div class="tl">${b.timeline.map(t=>`
+      <div class="tl-item ${t.s}"><span class="dot"></span>
+        <div class="tl-date">${t.date}</div>
+        <div class="tl-ev">${t.ev}</div>
+        <div class="tl-note">${t.note}</div>
+      </div>`).join('')}</div>
+  </div>
+  <div style="font-size:11.5px;color:var(--muted);text-align:center;padding:6px 10px">Immutable relationship history — every capture, research run, and interaction is logged and auditable.</div>`;
+}
+
+/* ---------- theme ---------- */
+const root=document.documentElement, tb=document.getElementById('themeBtn'), tl=document.getElementById('themeLbl'), ti=document.getElementById('themeIcon');
+const moon='<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>';
+const sun='<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M6 6 4.5 4.5M19.5 19.5 18 18M18 6l1.5-1.5M4.5 19.5 6 18"/>';
+function sysDark(){ return window.matchMedia('(prefers-color-scheme: dark)').matches; }
+function applyTheme(t){ if(t){ root.setAttribute('data-theme',t); } const dark = t? t==='dark' : sysDark(); ti.innerHTML = dark?sun:moon; tl.textContent = dark?'Light':'Dark'; }
+tb.onclick=()=>{ const cur=root.getAttribute('data-theme'); const goingDark = cur? cur!=='dark' : !sysDark(); applyTheme(goingDark?'dark':'light'); };
+applyTheme(null);
+
+/* ---------- white-label: brand + catalog ---------- */
+const CATALOG = {
+  xpi:{}, // xpi uses each opportunity's own product/price
+  momentum:{
+    concierge:{n:'AI Answering & Booking',p:'$349/mo'},
+    booking:{n:'Online Booking Setup',p:'$249 setup'},
+    reviews:{n:'Reputation Builder',p:'$129/mo'},
+    enrollment:{n:'Client Onboarding Automation',p:'$299/mo'},
+    enterprise:{n:'Multi-Site Rollout',p:'custom'},
+    partner:{n:'Referral Partner Program',p:'—'},
+    intake:{n:'Lead Intake & Routing',p:'$179/mo'},
+    crm:{n:'CRM + Follow-up',p:'$199/mo'},
+  }
+};
+const BRANDS = {
+  xpi:{label:'XPI', wordmark:'XPI<span>·</span>Intel', accent:null, catalog:'xpi', catName:'XPI match'},
+  momentum:{label:'Momentum BD', wordmark:'Momentum<span>·</span>BD', accent:'#3B82F6', catalog:'momentum', catName:'Product match'}
+};
+let activeBrand='xpi';
+// Server-supplied brand profile (falls back to XPI defaults if opened without the server)
+let SERVER_CFG={ accent:null, wordmark:'XPI<span>·</span>Intel', productLabel:'XPI match', showWhiteLabel:true };
+function catLabel(){ return (activeBrand==='xpi') ? (SERVER_CFG.productLabel||BRANDS.xpi.catName) : BRANDS[activeBrand].catName; }
+function prodFor(o){ const cat=BRANDS[activeBrand].catalog; if(cat==='xpi'||!o.pkey) return {n:o.product,p:o.price}; const c=CATALOG[cat][o.pkey]; return c?c:{n:o.product,p:o.price}; }
+function playProd(b){ const cat=BRANDS[activeBrand].catalog; if(cat==='xpi'||!b.play.pkey) return b.play.product; const c=CATALOG[cat][b.play.pkey]; return c?(c.n+' — '+c.p):b.play.product; }
+function applyBrand(k){
+  activeBrand=k; const br=BRANDS[k]; const r=document.documentElement.style;
+  const accent = br.accent || SERVER_CFG.accent; // 'xpi' base uses the server profile's accent
+  if(accent){ r.setProperty('--accent',accent); r.setProperty('--accent-soft','color-mix(in srgb, '+accent+' 16%, transparent)'); }
+  else { r.removeProperty('--accent'); r.removeProperty('--accent-soft'); }
+  const mk=document.querySelector('#appbar .mark'); if(mk) mk.innerHTML=(k==='xpi'?(SERVER_CFG.wordmark||br.wordmark):br.wordmark);
+  if(current) renderIntel(current); else renderHome();
+}
+document.querySelectorAll('#wlSeg button').forEach(btn=>btn.onclick=()=>{
+  document.querySelectorAll('#wlSeg button').forEach(x=>x.classList.remove('on'));
+  btn.classList.add('on'); applyBrand(btn.dataset.brand);
+});
+
+function applyServerBranding(cfg){
+  if(cfg.pageTitle){ document.title=cfg.pageTitle; const t=document.getElementById('pgTitle'); if(t) t.textContent=cfg.pageTitle; }
+  if(cfg.eyebrow){ const e=document.getElementById('pgEyebrow'); if(e) e.textContent=cfg.eyebrow; }
+  if(cfg.lede){ const l=document.getElementById('pgLede'); if(l) l.innerHTML=cfg.lede; }
+  if(cfg.showWhiteLabel===false){ const wl=document.querySelector('.wl'); if(wl) wl.style.display='none'; const wn=document.querySelector('.wl-note'); if(wn) wn.style.display='none'; }
+}
+
+// Boot: pull the server profile (branding), then render. Works offline too (keeps XPI defaults).
+fetch('/api/config').then(r=>r.json()).then(cfg=>{ SERVER_CFG={...SERVER_CFG,...cfg}; applyServerBranding(SERVER_CFG); })
+  .catch(()=>{})
+  .finally(()=>{ applyBrand('xpi'); });
+</script>
+</body>
+</html>

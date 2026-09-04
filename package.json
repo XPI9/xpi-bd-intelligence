@@ -1,0 +1,16 @@
+{
+  "name": "xpi-bd-intelligence",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "XPI BD Intelligence — one real scan proof (card/URL -> live AI research -> evidence -> XPI product match)",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2"
+  }
+}

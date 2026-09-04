@@ -1,0 +1,113 @@
+// ============================================================================
+//  XPI BD Intelligence — proof server
+//  Serves the app UI and three live endpoints:
+//    POST /api/extract   card image  -> contact fields
+//    POST /api/research  {name,url}  -> full prospect intelligence (live AI)
+//    GET  /api/health
+// ============================================================================
+
+import 'dotenv/config';
+import express from 'express';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { runResearch } from './lib/research.js';
+import { extractCard, generateVariations } from './lib/anthropic.js';
+import { CATALOG } from './lib/catalog.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const app = express();
+app.use(express.json({ limit: '12mb' })); // card images arrive as base64
+
+const KEY_OK = !!process.env.ANTHROPIC_API_KEY && !process.env.ANTHROPIC_API_KEY.includes('REPLACE_ME');
+
+// --- brand profile (drives the front-end look; catalog is chosen in lib/catalog.js) ---
+const PROFILE = (process.env.BD_PROFILE || 'xpi').toLowerCase();
+const CONFIG = {
+  xpi: {
+    profile: 'xpi',
+    wordmark: 'XPI<span>·</span>Intel',
+    accent: '#F2A93B',
+    pageTitle: 'XPI BD Intelligence',
+    eyebrow: 'XPI Solutions · Product Demo',
+    lede:
+      'See the opportunity before you make the pitch. Capture any business, and the platform researches it, backs every finding with <b>evidence</b>, scores the opportunity, and tells your rep exactly what to do next.',
+    productLabel: 'XPI match',
+    showWhiteLabel: true,
+  },
+  core: {
+    profile: 'core',
+    wordmark: 'BD<span>·</span>Intel',
+    accent: '#3B82F6',
+    pageTitle: 'BD Intelligence',
+    eyebrow: 'Business Development Intelligence',
+    lede:
+      'Scan any business — card, website, or name — and get an evidence-backed opportunity brief in seconds: who they are, where they’re leaking revenue, and the next best move. Your catalog, your brand.',
+    productLabel: 'Solution match',
+    showWhiteLabel: false,
+  },
+};
+const BRAND = CONFIG[PROFILE] || CONFIG.xpi;
+
+app.get('/api/config', (_req, res) => res.json(BRAND));
+
+app.get('/api/health', (_req, res) => {
+  res.json({
+    ok: true,
+    profile: PROFILE,
+    anthropicKey: KEY_OK,
+    searchKey: !!process.env.SERPER_API_KEY,
+    model: process.env.BD_MODEL || 'claude-haiku-4-5',
+    catalogSize: CATALOG.length,
+  });
+});
+
+app.get('/api/catalog', (_req, res) => res.json(CATALOG));
+
+app.post('/api/research', async (req, res) => {
+  if (!KEY_OK) return res.status(400).json({ error: 'no_api_key', message: 'Add your ANTHROPIC_API_KEY to .env and restart.' });
+  const { name, url } = req.body || {};
+  if (!name && !url) return res.status(400).json({ error: 'bad_input', message: 'Provide a business name or website.' });
+  try {
+    const intel = await runResearch({ name, url });
+    res.json(intel);
+  } catch (e) {
+    console.error('[research]', e);
+    res.status(500).json({ error: 'research_failed', message: e.message });
+  }
+});
+
+app.post('/api/variations', async (req, res) => {
+  if (!KEY_OK) return res.status(400).json({ error: 'no_api_key', message: 'Add your ANTHROPIC_API_KEY to .env and restart.' });
+  const { intel } = req.body || {};
+  if (!intel || !intel.name) return res.status(400).json({ error: 'bad_input', message: 'Missing prospect context. Run a scan first.' });
+  try {
+    const variations = await generateVariations(intel);
+    res.json(variations);
+  } catch (e) {
+    console.error('[variations]', e);
+    res.status(500).json({ error: 'variations_failed', message: e.message });
+  }
+});
+
+app.post('/api/extract', async (req, res) => {
+  if (!KEY_OK) return res.status(400).json({ error: 'no_api_key', message: 'Add your ANTHROPIC_API_KEY to .env and restart.' });
+  const { imageBase64, mediaType } = req.body || {};
+  if (!imageBase64) return res.status(400).json({ error: 'bad_input', message: 'No image provided.' });
+  try {
+    const fields = await extractCard(imageBase64, mediaType || 'image/jpeg');
+    res.json(fields);
+  } catch (e) {
+    console.error('[extract]', e);
+    res.status(500).json({ error: 'extract_failed', message: e.message });
+  }
+});
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`\n  ${BRAND.pageTitle}  (${PROFILE})  →  http://localhost:${PORT}`);
+  console.log(`  Claude key: ${KEY_OK ? 'loaded ✓' : 'MISSING ✗  (edit .env)'}`);
+  console.log(`  Search key: ${process.env.SERPER_API_KEY ? 'loaded ✓' : 'not set (website-only)'}`);
+  console.log(`  Catalog: ${CATALOG.length} products\n`);
+});
