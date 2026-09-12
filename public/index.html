@@ -9,6 +9,15 @@
 <meta property="og:title" content="XPI BD Intelligence">
 <meta property="og:description" content="See the opportunity before you make the pitch.">
 <meta property="og:type" content="website">
+
+<!-- PWA / installable app -->
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icons/favicon-64.png" sizes="64x64" type="image/png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BD Intel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -1250,6 +1259,15 @@ fetch('/api/config').then(r=>r.json()).then(cfg=>{ SERVER_CFG={...SERVER_CFG,...
   init(); requestAnimationFrame(frame);
   let t; addEventListener('resize',()=>{ clearTimeout(t); t=setTimeout(init,180); });
 })();
+</script>
+
+<!-- Register the service worker so the app is installable + opens offline -->
+<script>
+  if ('serviceWorker' in navigator) {
+    addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
 </script>
 </body>
 </html>
