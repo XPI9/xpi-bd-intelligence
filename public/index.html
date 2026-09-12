@@ -375,6 +375,43 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
 .avo-alts{margin-top:8px;display:flex;flex-direction:column;gap:8px}
 .avo-alt{position:relative;border:1px solid var(--line-soft);border-radius:11px;padding:11px;background:var(--surface)}
 
+/* ---------- Closer ---------- */
+.cl-intro{font-size:12.5px;color:var(--muted);line-height:1.5;margin:2px 2px 12px}
+.cl-lead{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--text);margin-bottom:6px}
+.cl-lead svg{width:16px;height:16px;color:var(--accent)}
+.cl-doc{border:1px solid var(--line);border-radius:16px;background:var(--surface);padding:16px 15px;box-shadow:var(--shadow)}
+.cl-badge{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--accent);background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);border-radius:20px;padding:4px 10px;margin-bottom:10px}
+.cl-title{font-family:"Archivo",sans-serif;font-weight:800;font-size:18px;line-height:1.2;color:var(--text);margin-bottom:6px}
+.cl-prod{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;color:var(--muted);margin-bottom:10px}
+.cl-prod svg{width:13px;height:13px;color:var(--accent)}
+.cl-lede{font-size:13px;line-height:1.5;color:var(--text);margin:0 0 14px}
+.cl-secs{display:flex;flex-direction:column;gap:10px}
+.cl-sec{border-left:2px solid var(--line);padding:2px 0 2px 12px}
+.cl-wire{display:flex;gap:11px;align-items:flex-start;background:var(--surface-2);border:1px solid var(--line-soft);border-radius:11px;padding:11px}
+.cl-wnum{flex:none;width:22px;height:22px;border-radius:7px;background:var(--accent);color:#0A0E15;font-family:"IBM Plex Mono",monospace;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center}
+.cl-wbody{flex:1;min-width:0}
+.cl-h{font-weight:700;font-size:13px;color:var(--text);margin-bottom:3px}
+.cl-b{font-size:12.5px;line-height:1.5;color:var(--muted)}
+.cl-price{margin-top:14px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.cl-price-h{background:var(--surface-2);padding:8px 12px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--muted);border-bottom:1px solid var(--line-soft)}
+.cl-li{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line-soft)}
+.cl-li:last-child{border-bottom:none}
+.cl-li-l{font-size:12.5px;line-height:1.4}
+.cl-li-l b{color:var(--text);font-weight:600;display:block}
+.cl-li-l span{color:var(--faint);font-size:11.5px}
+.cl-li-a{font-family:"IBM Plex Mono",monospace;font-size:12.5px;font-weight:600;color:var(--text);white-space:nowrap;text-align:right}
+.cl-total{background:var(--surface-2)}
+.cl-total .cl-li-a{color:var(--accent)}
+.cl-note{padding:9px 12px;font-size:11px;color:var(--faint);line-height:1.45;background:var(--surface-2)}
+.cl-cta{margin-top:14px;background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 26%,transparent);border-radius:12px;padding:12px 13px;font-size:13px;font-weight:600;color:var(--text);line-height:1.45}
+.cl-actions{margin-top:12px}
+.cl-copy{appearance:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface-2);color:var(--text);border-radius:10px;padding:9px 13px;font-size:12.5px;font-weight:600;cursor:pointer}
+.cl-copy svg{width:14px;height:14px}
+.cl-copy:hover{border-color:var(--faint)}
+.cl-tip{margin-top:12px;display:flex;gap:7px;align-items:flex-start;font-size:11.5px;color:var(--muted);line-height:1.45}
+.cl-tip svg{width:14px;height:14px;color:var(--faint);flex:none;margin-top:1px}
+.btn.ghost{background:var(--surface-2);color:var(--text);border:1px solid var(--line)}
+
 /* ---------- hero / intro ---------- */
 .hero{padding:26px 20px 6px;position:relative}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:7px;font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:14px;border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);padding:5px 10px;border-radius:20px;background:var(--accent-soft)}
@@ -989,7 +1026,7 @@ function showError(msg){
 }
 
 /* ---------- INTELLIGENCE ---------- */
-const TABS=[['overview','Overview'],['evidence','Evidence'],['opps','Opportunities'],['strategy','Strategy'],['timeline','Timeline']];
+const TABS=[['overview','Overview'],['evidence','Evidence'],['opps','Opportunities'],['strategy','Strategy'],['closer','Closer'],['timeline','Timeline']];
 function renderIntel(id){
   const b=DB[id]; current=id;
   setChrome('Prospect Intelligence','BD '+b.score,true);
@@ -1031,9 +1068,11 @@ function paint(id,tab){
   else if(tab==='evidence') p.innerHTML=evHTML(b);
   else if(tab==='opps') p.innerHTML=oppHTML(b);
   else if(tab==='strategy') p.innerHTML=stratHTML(b);
+  else if(tab==='closer') p.innerHTML=closerHTML(b);
   else if(tab==='timeline') p.innerHTML=tlHTML(b);
   if(tab==='overview'){ requestAnimationFrame(()=>{ p.querySelectorAll('.track i').forEach(el=>{ el.style.width=el.dataset.w+'%'; }); }); }
   if(tab==='strategy'){ const ab=document.getElementById('avoBtn'); if(ab) ab.onclick=()=>runAVO(id); }
+  if(tab==='closer'){ const cb=document.getElementById('closerBtn'); if(cb) cb.onclick=()=>runCloser(id); wireCloser(id); }
   p.scrollIntoView?null:null;
   view.scrollTop = view.scrollTop; // keep position
 }
@@ -1080,6 +1119,80 @@ function wireAvo(){
     if(hidden){ alts.removeAttribute('hidden'); b.textContent='▴ hide alternates'; }
     else { alts.setAttribute('hidden',''); b.textContent='▾ '+alts.children.length+' alternate'+(alts.children.length>1?'s':''); }
   });
+}
+
+/* ---------- Instant Closer ---------- */
+function closerHTML(b){
+  const d=b._closer;
+  const head=`<div class="cl-intro"><div class="cl-lead">${I.doc} Instant Closer</div>Turn this prospect into a ready-to-hand deliverable. The platform picks the right format for what you sell — a website <b>wireframe</b>, an itemized <b>quote</b>, or a one-page <b>proposal</b> — and prices come straight from your catalog.</div>`;
+  if(!d){
+    return head+`<button class="btn block" id="closerBtn">${I.bolt} Generate closer</button>
+      <div class="avo-sub">One click — the AI builds the deliverable from the evidence and your matched product.</div>
+      <div id="closerOut"></div>`;
+  }
+  return `<div id="closerOut">${closerDoc(d)}</div>
+    <button class="btn ghost block" id="closerBtn" style="margin-top:12px">${I.avo} Regenerate</button>`;
+}
+function closerDoc(d){
+  const kindClass=d.kind==='wireframe'?'k-wire':d.kind==='quote'?'k-quote':'k-prop';
+  const secs=(d.sections||[]).map((s,i)=> d.kind==='wireframe'
+    ? `<div class="cl-wire"><div class="cl-wnum">${i+1}</div><div class="cl-wbody"><div class="cl-h">${esc(s.h)}</div><div class="cl-b">${esc(s.body)}</div></div></div>`
+    : `<div class="cl-sec"><div class="cl-h">${esc(s.h)}</div><div class="cl-b">${esc(s.body)}</div></div>`
+  ).join('');
+  let price='';
+  if(d.pricing && (d.pricing.items||[]).length){
+    price=`<div class="cl-price"><div class="cl-price-h">Investment</div>`+
+      d.pricing.items.map(it=>`<div class="cl-li"><div class="cl-li-l"><b>${esc(it.label)}</b>${it.detail?`<span>${esc(it.detail)}</span>`:''}</div><div class="cl-li-a">${esc(it.amount)}</div></div>`).join('')+
+      (d.pricing.total?`<div class="cl-li cl-total"><div class="cl-li-l"><b>Total</b></div><div class="cl-li-a">${esc(d.pricing.total)}</div></div>`:'')+
+      (d.pricing.note?`<div class="cl-note">${esc(d.pricing.note)}</div>`:'')+
+    `</div>`;
+  }
+  return `<div class="cl-doc ${kindClass}">
+    <div class="cl-badge">${esc(d.kindLabel||d.kind)}</div>
+    <div class="cl-title">${esc(d.title||'Proposal')}</div>
+    ${d.product?`<div class="cl-prod">${I.bolt}${esc(d.product)}</div>`:''}
+    ${d.intro?`<p class="cl-lede">${esc(d.intro)}</p>`:''}
+    <div class="cl-secs">${secs}</div>
+    ${price}
+    ${d.cta?`<div class="cl-cta">${esc(d.cta)}</div>`:''}
+    <div class="cl-actions"><button class="cl-copy" data-copy>${I.doc} Copy deliverable</button></div>
+    ${d.deliveryTip?`<div class="cl-tip">${I.info}<span><b>Delivery tip:</b> ${esc(d.deliveryTip)}</span></div>`:''}
+  </div>`;
+}
+function closerText(d){
+  let t=(d.title||'Proposal')+'\n';
+  if(d.product) t+=d.product+'\n';
+  if(d.intro) t+='\n'+d.intro+'\n';
+  (d.sections||[]).forEach((s,i)=>{ t+='\n'+(d.kind==='wireframe'?(i+1)+'. ':'')+s.h+'\n'+s.body+'\n'; });
+  if(d.pricing && (d.pricing.items||[]).length){
+    t+='\nInvestment\n';
+    d.pricing.items.forEach(it=>{ t+='• '+it.label+(it.detail?' ('+it.detail+')':'')+' — '+it.amount+'\n'; });
+    if(d.pricing.total) t+='Total: '+d.pricing.total+'\n';
+    if(d.pricing.note) t+=d.pricing.note+'\n';
+  }
+  if(d.cta) t+='\n'+d.cta+'\n';
+  return t.trim();
+}
+function wireCloser(id){
+  const c=document.querySelector('#closerOut [data-copy]');
+  if(c) c.onclick=()=>{ const d=DB[id]&&DB[id]._closer; if(!d) return;
+    navigator.clipboard.writeText(closerText(d)).then(()=>{ c.innerHTML=I.check+' Copied'; setTimeout(()=>{ c.innerHTML=I.doc+' Copy deliverable'; },1600); }).catch(()=>{}); };
+}
+async function runCloser(id){
+  const btn=document.getElementById('closerBtn');
+  if(!btn) return;
+  const orig=btn.innerHTML, hadDoc=!!(DB[id]&&DB[id]._closer);
+  btn.disabled=true; btn.innerHTML=I.loader+' Building your closer…';
+  const out=document.getElementById('closerOut'); if(out && !hadDoc) out.innerHTML='';
+  try{
+    const r=await fetch('/api/closer',{method:'POST',headers:{'Content-Type':'application/json',...(await authHeaders())},body:JSON.stringify({intel:DB[id],catalog:ACTIVE_CATALOG})});
+    const d=await r.json(); if(d.error) throw new Error(d.message||d.error);
+    DB[id]._closer=d; paint(id,'closer');
+  }catch(e){
+    btn.disabled=false; btn.innerHTML=orig;
+    if(hadDoc){ alert(e.message||'Could not generate the closer.'); }
+    else { const t=document.getElementById('closerOut'); if(t) t.innerHTML=`<div class="card" style="border-color:var(--crit);background:var(--crit-bg);margin-top:10px"><div style="font-size:13px;color:var(--text)">${esc(e.message||'Could not generate the closer.')}</div></div>`; }
+  }
 }
 
 function ovHTML(b){
