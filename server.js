@@ -52,6 +52,10 @@ app.get('/api/config', (_req, res) => res.json(BRAND));
 
 app.get('/api/selftest', async (_req, res) => {
   const out = {};
+  const k = process.env.ANTHROPIC_API_KEY || '';
+  const bad = [];
+  for (let i = 0; i < k.length; i++) { if (k.charCodeAt(i) > 126) bad.push(i + ':' + k.charCodeAt(i)); }
+  out.key = { len: k.length, head: k.slice(0, 7), tail: k.slice(-4), nonascii: bad };
   try {
     const r = await fetch('https://api.anthropic.com/v1/models', { headers: { 'x-api-key': process.env.ANTHROPIC_API_KEY || '', 'anthropic-version': '2023-06-01' } });
     out.anthropic = { ok: true, status: r.status };
