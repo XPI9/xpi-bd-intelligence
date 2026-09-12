@@ -399,12 +399,12 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
   background:radial-gradient(1000px 720px at 50% 34%, color-mix(in srgb,var(--accent) 13%,transparent), transparent 60%), var(--ink);transition:opacity .6s ease}
 #intro.gone{opacity:0;pointer-events:none}
 .intro-inner{display:flex;flex-direction:column;align-items:center;text-align:center;padding:22px;max-width:420px}
-.intro-mark{position:relative;width:78px;height:78px;margin-bottom:22px;display:flex;align-items:center;justify-content:center;opacity:0;animation:iMark .6s .1s ease forwards}
+.intro-mark{position:relative;margin-bottom:14px;display:flex;align-items:center;justify-content:center;opacity:0;animation:iMark .6s .1s ease forwards}
 .intro-mark .ring{position:absolute;inset:0;border-radius:50%;border:2px solid color-mix(in srgb,var(--accent) 55%,transparent);box-shadow:0 0 34px color-mix(in srgb,var(--accent) 40%,transparent),inset 0 0 22px color-mix(in srgb,var(--accent) 25%,transparent);animation:iSpin 3.4s linear infinite}
 .intro-mark .ring::after{content:"";position:absolute;top:-3px;left:50%;width:6px;height:6px;border-radius:50%;background:var(--accent);transform:translateX(-50%);box-shadow:0 0 12px 3px var(--accent)}
 .intro-mark .ico{color:var(--accent)}.intro-mark .ico svg{width:32px;height:32px}
-.intro-mark .bdmark{font-family:"Archivo";font-weight:800;font-size:27px;letter-spacing:-.03em;color:var(--accent);animation:bdpulse 1.7s ease-in-out infinite}
-@keyframes bdpulse{0%,100%{opacity:.72;text-shadow:0 0 8px color-mix(in srgb,var(--accent) 35%,transparent)}50%{opacity:1;text-shadow:0 0 26px color-mix(in srgb,var(--accent) 85%,transparent),0 0 10px color-mix(in srgb,var(--accent) 60%,transparent)}}
+.intro-mark .bdmark{font-family:"Archivo";font-weight:800;font-size:clamp(104px,36vw,188px);line-height:.9;letter-spacing:-.05em;color:var(--accent);animation:bdpulse 1.6s ease-in-out infinite}
+@keyframes bdpulse{0%,100%{opacity:.62;text-shadow:0 0 14px color-mix(in srgb,var(--accent) 30%,transparent)}50%{opacity:1;text-shadow:0 0 46px color-mix(in srgb,var(--accent) 85%,transparent),0 0 18px color-mix(in srgb,var(--accent) 65%,transparent)}}
 .intro-word{font-family:"Archivo";font-weight:800;font-size:clamp(24px,7.5vw,38px);letter-spacing:-.02em;opacity:0;transform:translateY(14px);animation:iRise .7s .35s ease forwards}
 .intro-word span{color:var(--accent)}
 .intro-pipe{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-top:18px}
@@ -499,7 +499,7 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
 <canvas id="fx" aria-hidden="true"></canvas>
 <div id="intro">
   <div class="intro-inner">
-    <div class="intro-mark"><span class="ring"></span><span class="ico bdmark">BD</span></div>
+    <div class="intro-mark"><span class="ico bdmark">BD</span></div>
     <div class="intro-word">BD<span>·</span>INTELLIGENCE</div>
     <div class="intro-pipe"><i>Capture</i><i>Research</i><i>Evidence</i><i>Score</i><i>Play</i></div>
     <div class="intro-tag">See the opportunity before you make the pitch.</div>
