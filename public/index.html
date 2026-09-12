@@ -394,8 +394,58 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
 .scanbar .btn{padding:0 18px;border-radius:14px;font-size:14px;flex:none}
 .home-note{font-size:11px;color:var(--faint);text-align:center;line-height:1.4;margin-top:16px}
 
+/* ---------- intro sequence ---------- */
+#intro{position:fixed;inset:0;z-index:60;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(1000px 720px at 50% 34%, color-mix(in srgb,var(--accent) 13%,transparent), transparent 60%), var(--ink);transition:opacity .6s ease}
+#intro.gone{opacity:0;pointer-events:none}
+.intro-inner{display:flex;flex-direction:column;align-items:center;text-align:center;padding:22px;max-width:420px}
+.intro-mark{position:relative;width:78px;height:78px;margin-bottom:22px;display:flex;align-items:center;justify-content:center;opacity:0;animation:iMark .6s .1s ease forwards}
+.intro-mark .ring{position:absolute;inset:0;border-radius:50%;border:2px solid color-mix(in srgb,var(--accent) 55%,transparent);box-shadow:0 0 34px color-mix(in srgb,var(--accent) 40%,transparent),inset 0 0 22px color-mix(in srgb,var(--accent) 25%,transparent);animation:iSpin 3.4s linear infinite}
+.intro-mark .ring::after{content:"";position:absolute;top:-3px;left:50%;width:6px;height:6px;border-radius:50%;background:var(--accent);transform:translateX(-50%);box-shadow:0 0 12px 3px var(--accent)}
+.intro-mark .ico{color:var(--accent)}.intro-mark .ico svg{width:32px;height:32px}
+.intro-word{font-family:"Archivo";font-weight:800;font-size:clamp(24px,7.5vw,38px);letter-spacing:-.02em;opacity:0;transform:translateY(14px);animation:iRise .7s .35s ease forwards}
+.intro-word span{color:var(--accent)}
+.intro-pipe{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.intro-pipe i{font-family:"IBM Plex Mono",monospace;font-style:normal;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line-soft);border-radius:20px;padding:5px 10px;opacity:0;transform:translateY(8px)}
+.intro-pipe i:nth-child(1){animation:iChip .55s .85s ease forwards}
+.intro-pipe i:nth-child(2){animation:iChip .55s 1.05s ease forwards}
+.intro-pipe i:nth-child(3){animation:iChip .55s 1.25s ease forwards}
+.intro-pipe i:nth-child(4){animation:iChip .55s 1.45s ease forwards}
+.intro-pipe i:nth-child(5){animation:iChip .55s 1.65s ease forwards}
+.intro-tag{margin-top:22px;color:var(--muted);font-size:13.5px;line-height:1.5;opacity:0;animation:iFade .8s 2s ease forwards}
+.intro-skip{position:absolute;bottom:28px;left:0;right:0;text-align:center;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);opacity:0;animation:iFade .6s 2.5s ease forwards;cursor:pointer}
+@keyframes iMark{to{opacity:1}}
+@keyframes iSpin{to{transform:rotate(360deg)}}
+@keyframes iRise{to{opacity:1;transform:none}}
+@keyframes iChip{0%{opacity:0;transform:translateY(8px)}55%{opacity:1;transform:none;color:var(--accent);border-color:color-mix(in srgb,var(--accent) 70%,transparent);box-shadow:0 0 14px color-mix(in srgb,var(--accent) 40%,transparent)}100%{opacity:1;color:var(--muted);border-color:var(--line-soft);box-shadow:none}}
+@keyframes iFade{to{opacity:1}}
+
+/* ---------- circuit / pipeline (electric) ---------- */
+.circuit{display:flex;align-items:flex-start;gap:0;margin:6px 0 2px;width:100%}
+.circuit .node{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0}
+.circuit .orb{width:18px;height:18px;border-radius:50%;background:var(--surface-3);border:2px solid var(--line);position:relative;transition:background .3s,border-color .3s,box-shadow .3s;flex:none}
+.circuit .nlabel{font-family:"IBM Plex Mono",monospace;font-size:8.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);text-align:center;line-height:1.1;transition:color .3s;white-space:nowrap}
+.circuit .wire{flex:1 1 auto;height:3px;background:var(--line-soft);border-radius:3px;margin-top:8px;position:relative;overflow:hidden;min-width:10px}
+.circuit .wire::before{content:"";position:absolute;top:0;bottom:0;left:-45%;width:45%;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0}
+.circuit .node.lit .orb{background:var(--accent);border-color:var(--accent);box-shadow:0 0 18px 3px color-mix(in srgb,var(--accent) 75%,transparent),inset 0 0 4px 1px rgba(255,255,255,.7)}
+.circuit .node.lit .nlabel{color:var(--text)}
+.circuit .node.lit .orb::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:1px solid color-mix(in srgb,var(--accent) 55%,transparent);animation:spark .55s ease-out}
+@keyframes spark{from{opacity:.95;transform:scale(.5)}to{opacity:0;transform:scale(1.75)}}
+.circuit .wire.done{background:color-mix(in srgb,var(--accent) 55%,var(--line-soft))}
+.circuit .wire.flow::before{opacity:1;animation:current .55s linear infinite}
+@keyframes current{from{left:-45%}to{left:100%}}
+.circuit.ambient .orb{animation:ambpulse 4.8s ease-in-out infinite;animation-delay:calc(var(--i,0)*.5s)}
+.circuit.ambient .nlabel{animation:amblabel 4.8s ease-in-out infinite;animation-delay:calc(var(--i,0)*.5s)}
+.circuit.ambient .wire::before{opacity:1;animation:current 2.6s linear infinite;animation-delay:calc(var(--i,0)*.5s)}
+@keyframes ambpulse{0%,100%{background:var(--surface-3);border-color:var(--line);box-shadow:0 0 0 0 transparent}10%,18%{background:var(--accent);border-color:var(--accent);box-shadow:0 0 16px 3px color-mix(in srgb,var(--accent) 70%,transparent)}}
+@keyframes amblabel{0%,100%{color:var(--faint)}10%,18%{color:var(--text)}}
+.research-wrap{padding:26px 16px}
+.rstatus{text-align:center;font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.05em;color:var(--muted);margin-top:26px;min-height:16px}
+.rstatus b{color:var(--accent);font-weight:600}
+
 @media (prefers-reduced-motion:reduce){
   #fx{display:none}
+  #intro{display:none}
   *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
 </style>
@@ -403,6 +453,15 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
 <body>
 
 <canvas id="fx" aria-hidden="true"></canvas>
+<div id="intro">
+  <div class="intro-inner">
+    <div class="intro-mark"><span class="ring"></span><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M3 12h18"/></svg></span></div>
+    <div class="intro-word">BD<span>·</span>INTELLIGENCE</div>
+    <div class="intro-pipe"><i>Capture</i><i>Research</i><i>Evidence</i><i>Score</i><i>Play</i></div>
+    <div class="intro-tag">See the opportunity before you make the pitch.</div>
+  </div>
+  <div class="intro-skip" id="introSkip">tap to skip</div>
+</div>
 <div class="app">
           <div class="appbar" id="appbar">
             <div class="back" id="backBtn" role="button" tabindex="0" aria-label="Back">
@@ -635,6 +694,30 @@ function setChrome(sub,badge,back){ appSub.textContent=sub; appBadge.textContent
 backBtn.onclick = renderHome;
 backBtn.onkeydown = e=>{ if(e.key==='Enter'||e.key===' ') renderHome(); };
 
+/* ---------- pipeline circuit ---------- */
+const CIRCUIT_STAGES=['Capture','Research','Evidence','Score','Play'];
+function circuitHTML(cls){
+  let h='<div class="circuit '+(cls||'')+'">';
+  CIRCUIT_STAGES.forEach((lab,i)=>{
+    h+='<div class="node" style="--i:'+i+'"><span class="orb"></span><span class="nlabel">'+lab+'</span></div>';
+    if(i<CIRCUIT_STAGES.length-1) h+='<span class="wire" style="--i:'+i+'"></span>';
+  });
+  return h+'</div>';
+}
+
+/* ---------- voice capture ---------- */
+function startVoice(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  const inp=document.getElementById('urlIn');
+  if(!SR){ if(inp){ inp.focus(); inp.placeholder='Voice needs a supported browser — type the business name'; } return; }
+  const r=new SR(); r.lang='en-US'; r.interimResults=false; r.maxAlternatives=1;
+  if(inp){ inp.placeholder='🎙 Listening… say the business name'; }
+  r.onresult=e=>{ const t=(e.results[0][0].transcript||'').trim(); if(!t){ return; } if(inp) inp.value=t; startLive({name:t,url:''}); };
+  r.onerror=ev=>{ if(inp) inp.placeholder=(ev.error==='not-allowed')?'Microphone blocked — allow it, or type the name':'Didn’t catch that — tap Voice again or type it'; };
+  r.onend=()=>{ if(inp && inp.placeholder.indexOf('Listening')>-1) inp.placeholder='Enter a website or business name…'; };
+  try{ r.start(); }catch(_){ if(inp) inp.focus(); }
+}
+
 /* ---------- HOME ---------- */
 function renderHome(){
   current=null;
@@ -644,13 +727,7 @@ function renderHome(){
     <div class="hero-eyebrow">${I.avo} Agentic BD Intelligence</div>
     <h1 class="hero-h">See the opportunity <em>before</em> you make the pitch.</h1>
     <p class="hero-sub">Point it at any business. Autonomous agents research it, back every finding with <b>evidence</b>, score the opportunity, and hand your rep the play — in about 30 seconds.</p>
-    <div class="pipe">
-      <div class="pipe-step"><span class="pd"></span>Capture</div><span class="pipe-arm"></span>
-      <div class="pipe-step"><span class="pd"></span>Research</div><span class="pipe-arm"></span>
-      <div class="pipe-step"><span class="pd"></span>Evidence</div><span class="pipe-arm"></span>
-      <div class="pipe-step"><span class="pd"></span>Score</div><span class="pipe-arm"></span>
-      <div class="pipe-step"><span class="pd"></span>Play</div>
-    </div>
+    ${circuitHTML('ambient')}
   </div>
   <div class="pad">
     <div class="scanbar">
@@ -665,11 +742,7 @@ function renderHome(){
       ${capBtn('store','Storefront')}
       ${capBtn('voice','Voice')}
     </div>
-    <div class="section-h">See it work — live example</div>
-    ${sampleRow('legacy')}
-    ${sampleRow('bright')}
-    ${sampleRow('gulf')}
-    <div class="home-note">Examples are instant, offline samples. A website, card, or name runs <b style="color:var(--accent)">live AI research</b>.</div>
+    <div class="home-note">Point it at any business — a website, a name, a card photo, or your voice. Live research in ~30 seconds.</div>
     <input id="cardFile" type="file" accept="image/*" style="display:none">
   </div>`;
 
@@ -677,7 +750,8 @@ function renderHome(){
     el.onclick=()=>{ const k=el.dataset.cap;
       if(k==='web'||k==='name'){ document.getElementById('urlIn').focus(); }
       else if(k==='card'||k==='store'){ document.getElementById('cardFile').click(); }
-      else { flash(el); }
+      else if(k==='voice'){ startVoice(); }
+      else { const inp=document.getElementById('urlIn'); if(inp){ inp.focus(); inp.placeholder='Point a camera app at the QR, then paste the link here'; } }
     };
   });
   view.querySelectorAll('[data-sample]').forEach(el=> el.onclick=()=> startSample(el.dataset.sample));
@@ -720,27 +794,35 @@ async function startCard(file){
 }
 function fileToBase64(file){ return new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(String(fr.result).split(',')[1]); fr.onerror=rej; fr.readAsDataURL(file); }); }
 
-async function showResearch({name,sub,steps,id,dataPromise}){
+async function showResearch({name,sub,id,dataPromise}){
   setChrome('Researching','Live',false);
-  view.innerHTML=`<div class="pad">
+  view.innerHTML=`<div class="research-wrap">
     <div class="research-head">
       <div class="scanpulse"><span class="r"></span><span class="r"></span><span class="r"></span><span class="core">${I.scan}</span></div>
       <div class="rh-name">${esc(name)}</div>
       <div class="rh-sub">${esc(sub||'')}</div>
     </div>
-    <div class="steps" id="steps">
-      ${steps.map((l)=>`<div class="step" data-s="idle"><span class="st">${I.loader}</span><span class="lbl">${l}</span><span class="meta"></span></div>`).join('')}
-    </div>
+    ${circuitHTML('')}
+    <div class="rstatus" id="rstatus"><b>Capturing…</b></div>
   </div>`;
   let data=null, err=null;
   dataPromise.then(d=>{data=d;}).catch(e=>{err=e;});
-  const els=[...view.querySelectorAll('.step')];
-  const delay=reduce?70:520;
-  for(let i=0;i<els.length;i++){
-    els[i].dataset.s='active';
-    await sleep(delay);
-    if(i===els.length-1){ while(!data && !err){ await sleep(150); } }
-    els[i].dataset.s='done'; const st=els[i].querySelector('.st'); if(st) st.innerHTML=I.check;
+  const nodes=[...view.querySelectorAll('.circuit .node')];
+  const wires=[...view.querySelectorAll('.circuit .wire')];
+  const status=document.getElementById('rstatus');
+  const labels=['Capturing the business…','Researching across the web…','Collecting the evidence…','Scoring the opportunity…','Building the play…'];
+  const d=reduce?60:560;
+  for(let i=0;i<nodes.length;i++){
+    if(i>0){ const wi=wires[i-1]; wi.classList.add('flow'); await sleep(d); wi.classList.remove('flow'); wi.classList.add('done'); }
+    if(i===nodes.length-1){
+      if(status) status.innerHTML='<b>Finalizing the play…</b>';
+      const wi=wires[i-1]; if(wi) wi.classList.add('flow');
+      while(!data && !err){ await sleep(150); }
+      if(wi){ wi.classList.remove('flow'); wi.classList.add('done'); }
+    }
+    nodes[i].classList.add('lit');
+    if(status && labels[i]) status.innerHTML='<b>'+labels[i]+'</b>';
+    await sleep(reduce?30:300);
   }
   while(!data && !err){ await sleep(150); }
   if(err){ showError(err.message||'Research failed.'); return; }
@@ -995,6 +1077,16 @@ function applyServerBranding(cfg){
 fetch('/api/config').then(r=>r.json()).then(cfg=>{ SERVER_CFG={...SERVER_CFG,...cfg}; applyServerBranding(SERVER_CFG); })
   .catch(()=>{})
   .finally(()=>{ applyBrand('xpi'); });
+
+/* ---------- intro sequence dismiss ---------- */
+(function(){
+  const intro=document.getElementById('intro'); if(!intro) return;
+  if(reduce){ intro.remove(); return; }
+  let killed=false;
+  const done=()=>{ if(killed) return; killed=true; intro.classList.add('gone'); setTimeout(()=>{ intro.remove(); },700); };
+  const t=setTimeout(done,4100);
+  intro.addEventListener('click',()=>{ clearTimeout(t); done(); });
+})();
 
 /* ---------- ambient agentic backdrop (neural constellation) ---------- */
 (function(){
