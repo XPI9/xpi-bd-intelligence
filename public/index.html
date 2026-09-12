@@ -411,14 +411,14 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
 .intro-word{font-family:"Archivo";font-weight:800;font-size:clamp(24px,7.5vw,38px);letter-spacing:-.02em;color:#EDF1F7;opacity:0;transform:translateY(14px);animation:iRise .7s .35s ease forwards}
 .intro-word span{color:var(--accent)}
 .intro-pipe{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-top:18px}
-.intro-pipe i{font-family:"IBM Plex Mono",monospace;font-style:normal;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#9aa7bb;border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 10px;opacity:0;transform:translateY(8px)}
+.intro-pipe i{font-family:"IBM Plex Mono",monospace;font-style:normal;font-size:9.5px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#D5DEEA;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.22);border-radius:20px;padding:5px 11px;opacity:0;transform:translateY(8px)}
 .intro-pipe i:nth-child(1){animation:iChip .55s .85s ease forwards}
 .intro-pipe i:nth-child(2){animation:iChip .55s 1.05s ease forwards}
 .intro-pipe i:nth-child(3){animation:iChip .55s 1.25s ease forwards}
 .intro-pipe i:nth-child(4){animation:iChip .55s 1.45s ease forwards}
 .intro-pipe i:nth-child(5){animation:iChip .55s 1.65s ease forwards}
 .intro-tag{margin-top:22px;color:#93a1b5;font-size:13.5px;line-height:1.5;opacity:0;animation:iFade .8s 2s ease forwards}
-.intro-skip{position:absolute;bottom:28px;left:0;right:0;text-align:center;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#6b7a8e;opacity:0;animation:iFade .6s 2.5s ease forwards;cursor:pointer}
+.intro-skip{position:absolute;bottom:28px;left:0;right:0;text-align:center;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#93a1b5;opacity:0;animation:iFade .6s 2.5s ease forwards;cursor:pointer}
 @keyframes iMark{to{opacity:1}}
 @keyframes iSpin{to{transform:rotate(360deg)}}
 @keyframes iRise{to{opacity:1;transform:none}}
@@ -525,6 +525,7 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
           <div class="view" id="view"><!-- screens injected --></div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.47.10/dist/umd/supabase.min.js"></script>
 <script>
 /* ---------------- icons ---------------- */
 const I = {
@@ -765,16 +766,34 @@ function startVoice(){
   try{ r.start(); }catch(_){ if(inp) inp.focus(); }
 }
 
-/* ================= ONBOARDING + ACCOUNT (local, testable) ================= */
-const PKEY_PROFILE='bdi_profile_v1', PKEY_PROSPECTS='bdi_prospects_v1';
-let PROFILE=null, ACTIVE_CATALOG=null, OB=null;
+/* ================= AUTH + ACCOUNT (Supabase cloud) ================= */
+const SUPABASE_URL='https://ladcpxqwvfiosffrvwdq.supabase.co';
+const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhZGNweHF3dmZpb3NmZnJ2d2RxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxODI3OTQsImV4cCI6MjEwNDc1ODc5NH0.0Se1F_572VXg5Z3QzDVxGdjhehci5ljM8-FFRyiR8dQ';
+let sb=null, USER=null, PROFILE=null, ACTIVE_CATALOG=null, OB=null;
 const BRAND_SWATCHES=['#F2A93B','#3B82F6','#22C3B8','#8B5CF6','#EF4444','#10B981','#EC4899','#0EA5E9'];
 function byId(id){ return document.getElementById(id); }
-function loadProfile(){ try{ return JSON.parse(localStorage.getItem(PKEY_PROFILE)||'null'); }catch(_){ return null; } }
-function persistProfile(p){ try{ localStorage.setItem(PKEY_PROFILE,JSON.stringify(p)); }catch(_){}}
-function clearProfile(){ try{ localStorage.removeItem(PKEY_PROFILE); }catch(_){}}
-function loadProspects(){ try{ return JSON.parse(localStorage.getItem(PKEY_PROSPECTS)||'[]'); }catch(_){ return []; } }
-function saveProspect(intel){ try{ const l=loadProspects(); l.unshift({id:'sv'+Date.now(),name:intel.name,loc:intel.loc,score:intel.score,at:Date.now(),intel}); localStorage.setItem(PKEY_PROSPECTS,JSON.stringify(l.slice(0,150))); }catch(_){}}
+function initSupabase(){ try{ sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON,{auth:{persistSession:true,autoRefreshToken:true}}); }catch(e){ sb=null; } }
+async function bootAccount(){ if(!sb){ view.innerHTML='<div class="pad"><div class="home-note">Could not reach the account service. Refresh to try again.</div></div>'; return; }
+  let session=null; try{ session=(await sb.auth.getSession()).data.session; }catch(_){}
+  if(!session){ renderAuth('signin'); return; } USER=session.user; await loadAccountAndRoute(); }
+async function loadAccountAndRoute(){ let acct=null; try{ const {data}=await sb.from('accounts').select('*').limit(1); acct=(data&&data[0])||null; }catch(_){}
+  if(!acct){ startOnboarding(); return; }
+  let prods=[]; try{ const {data}=await sb.from('products').select('*').eq('account_id',acct.id).order('created_at'); prods=data||[]; }catch(_){}
+  PROFILE={id:acct.id,type:acct.type,name:acct.name,company:acct.company,brand:acct.brand,catalogChoice:acct.catalog_choice,catalog:prods.map(p=>({pkey:p.pkey,name:p.name,solves:p.solves,price:p.price,verticals:p.verticals||[]}))};
+  applyProfile(PROFILE); renderHome(); }
+function renderAuth(mode){ mode=mode||'signin'; appbar.classList.remove('can-back'); setChrome('Account',mode==='signin'?'Sign in':'Create account',false);
+  view.innerHTML='<div class="ob"><div class="ob-body"><div class="ob-hero">'+I.avo+'</div><h2 class="ob-h">'+(mode==='signin'?'Welcome back':'Create your account')+'</h2><p class="ob-p">'+(mode==='signin'?'Sign in to your BD Intelligence workspace.':'One login for your workspace — synced across your devices.')+'</p><div class="ob-label">Email</div><input class="ob-input" id="auEmail" type="email" autocomplete="email" placeholder="you@business.com"><div class="ob-label">Password</div><input class="ob-input" id="auPass" type="password" placeholder="6+ characters"><div id="auErr" style="font-size:12.5px;min-height:16px;color:var(--crit)"></div><button class="btn block" id="auGo">'+(mode==='signin'?'Sign in':'Create account')+'</button><button class="ob-add" id="auSwap" style="border:none;color:var(--muted);margin-top:2px">'+(mode==='signin'?'New here? Create an account':'Already have an account? Sign in')+'</button></div></div>';
+  byId('auSwap').onclick=()=>renderAuth(mode==='signin'?'signup':'signin');
+  const go=async()=>{ const email=(byId('auEmail').value||'').trim(),pass=byId('auPass').value||'',err=byId('auErr'); err.style.color='var(--crit)'; err.textContent='';
+    if(!email||pass.length<6){ err.textContent='Enter your email and a password of 6+ characters.'; return; }
+    byId('auGo').disabled=true; byId('auGo').textContent='…';
+    try{ const res=mode==='signin'?await sb.auth.signInWithPassword({email,password:pass}):await sb.auth.signUp({email,password:pass}); if(res.error) throw res.error;
+      const sess=(await sb.auth.getSession()).data.session;
+      if(!sess){ err.style.color='var(--verified)'; err.textContent='Account created — check your email to confirm, then sign in.'; byId('auGo').disabled=false; byId('auGo').textContent='Create account'; return; }
+      USER=sess.user; await loadAccountAndRoute();
+    }catch(e){ err.textContent=(e&&e.message)||'Could not continue.'; byId('auGo').disabled=false; byId('auGo').textContent=(mode==='signin'?'Sign in':'Create account'); } };
+  byId('auGo').onclick=go; byId('auPass').onkeydown=e=>{ if(e.key==='Enter') go(); }; }
+async function saveProspect(intel){ if(!sb||!PROFILE) return; try{ await sb.from('prospects').insert({account_id:PROFILE.id,name:intel.name,loc:intel.loc,score:intel.score,intel}); }catch(_){}}
 function setAccent(c){ const r=document.documentElement.style; if(c){ r.setProperty('--accent',c); r.setProperty('--accent-soft','color-mix(in srgb, '+c+' 16%, transparent)'); } }
 function applyProfile(p){
   PROFILE=p||null; ACTIVE_CATALOG=(p&&p.catalog&&p.catalog.length)?p.catalog:null;
@@ -798,16 +817,28 @@ function obCatalog(){ const own=OB.catalogChoice==='own';
   byId('obNext').onclick=()=>{ if(OB.catalogChoice==='own'){ if(!OB.catalog.filter(p=>(p.name||'').trim()).length){ alert('Add at least one product, or choose XPI products.'); return; } } obBrand(); }; }
 function obBrand(){ obShell('<h2 class="ob-h">Pick your color</h2><p class="ob-p">Your brand accent across the app.</p><div class="ob-swatches">'+BRAND_SWATCHES.map(c=>'<div class="ob-sw '+(OB.brand===c?'sel':'')+'" data-c="'+c+'" style="background:'+c+'"></div>').join('')+'</div><div class="ob-spacer"></div><button class="btn block" id="obNext">Finish setup '+I.check+'</button>',90);
   view.querySelectorAll('.ob-sw').forEach(s=>s.onclick=()=>{ OB.brand=s.dataset.c; setAccent(s.dataset.c); view.querySelectorAll('.ob-sw').forEach(x=>x.classList.remove('sel')); s.classList.add('sel'); }); byId('obNext').onclick=obFinish; }
-function obFinish(){
+async function obFinish(){
   const cat=OB.catalogChoice==='own'?OB.catalog.filter(p=>(p.name||'').trim()).map((p,i)=>({pkey:'p'+(i+1),name:p.name.trim(),solves:(p.solves||'').trim()||p.name.trim(),price:(p.price||'').trim()||'—',verticals:[]})):null;
-  const profile={type:OB.type,name:OB.name,company:OB.type==='company'?OB.company:'',email:OB.email,brand:OB.brand,catalogChoice:OB.catalogChoice,catalog:cat,at:Date.now()};
-  persistProfile(profile); applyProfile(profile);
-  obShell('<div class="ob-hero" style="background:var(--verified-bg);color:var(--verified)">'+I.check+'</div><h2 class="ob-h">You’re all set'+(OB.name?', '+esc(OB.name.split(' ')[0]):'')+'.</h2><p class="ob-p">'+(cat?('BD Intelligence will recommend your '+cat.length+' product'+(cat.length>1?'s':'')+' to every prospect it researches.'):'BD Intelligence will recommend XPI products to every prospect.')+'</p><div class="ob-spacer"></div><button class="btn block" id="obGo">Enter BD Intelligence '+I.arrow+'</button>',100);
-  byId('obGo').onclick=()=>renderHome(); }
+  obShell('<div class="ob-hero">'+I.loader+'</div><h2 class="ob-h">Setting up…</h2><p class="ob-p">Creating your workspace and loading your products.</p>',100);
+  try{
+    let products=cat;
+    if(OB.catalogChoice==='xpi'){ try{ const xp=await (await fetch('/api/catalog')).json(); products=xp.map(p=>({pkey:p.pkey,name:p.name,solves:p.solves,price:p.price,verticals:p.verticals||[]})); }catch(_){ products=[]; } }
+    const editing=PROFILE&&PROFILE.id; let acctId;
+    if(editing){ acctId=PROFILE.id; const {error}=await sb.from('accounts').update({type:OB.type,name:OB.name,company:OB.type==='company'?OB.company:null,brand:OB.brand,catalog_choice:OB.catalogChoice}).eq('id',acctId); if(error) throw error; await sb.from('products').delete().eq('account_id',acctId); }
+    else{ const {data:acct,error}=await sb.from('accounts').insert({owner:USER.id,type:OB.type,name:OB.name,company:OB.type==='company'?OB.company:null,brand:OB.brand,catalog_choice:OB.catalogChoice}).select().single(); if(error) throw error; acctId=acct.id; }
+    if(products&&products.length){ const {error:pe}=await sb.from('products').insert(products.map(p=>({account_id:acctId,pkey:p.pkey,name:p.name,solves:p.solves,price:p.price,verticals:p.verticals||[]}))); if(pe) throw pe; }
+    PROFILE={id:acctId,type:OB.type,name:OB.name,company:OB.type==='company'?OB.company:'',brand:OB.brand,catalogChoice:OB.catalogChoice,catalog:products||[]}; applyProfile(PROFILE);
+    obShell('<div class="ob-hero" style="background:var(--verified-bg);color:var(--verified)">'+I.check+'</div><h2 class="ob-h">You’re all set'+(OB.name?', '+esc(OB.name.split(' ')[0]):'')+'.</h2><p class="ob-p">'+((PROFILE.catalog&&PROFILE.catalog.length)?('BD Intelligence will recommend your '+PROFILE.catalog.length+' product'+(PROFILE.catalog.length>1?'s':'')+' to every prospect it researches.'):'Ready to scan your first prospect.')+'</p><div class="ob-spacer"></div><button class="btn block" id="obGo">Enter BD Intelligence '+I.arrow+'</button>',100);
+    byId('obGo').onclick=()=>renderHome();
+  }catch(e){ obShell('<div class="ob-hero" style="background:var(--crit-bg);color:var(--crit)">'+I.info+'</div><h2 class="ob-h">Couldn’t save</h2><p class="ob-p">'+esc((e&&e.message)||'Please try again.')+'</p><div class="ob-spacer"></div><button class="btn block" id="obGo">Back</button>',100); byId('obGo').onclick=obBrand; } }
 function acctRow(){ if(!PROFILE) return ''; const who=PROFILE.company||PROFILE.name||'You'; const init=(who[0]||'B').toUpperCase(); const sub=PROFILE.catalog?('Selling '+PROFILE.catalog.length+' product'+(PROFILE.catalog.length>1?'s':'')):'Selling XPI products'; return '<div class="acct"><div class="av">'+esc(init)+'</div><div class="ai"><div class="an">'+esc(who)+'</div><div class="as">'+esc(sub)+'</div></div><button class="abtn" id="acctBtn">Setup</button></div>'; }
-function renderAccount(){ setChrome('Account','',true); view.innerHTML='<div class="pad">'+acctRow()+'<button class="btn block" id="acEdit" style="margin-bottom:10px">Edit my setup</button><button class="prosp-btn" id="acOut" style="color:var(--crit);border-color:color-mix(in srgb,var(--crit) 30%,transparent)">Sign out &amp; reset this device</button></div>'; byId('acEdit').onclick=startEditProfile; byId('acOut').onclick=()=>{ if(confirm('Sign out and clear your setup on this device?')){ clearProfile(); PROFILE=null; ACTIVE_CATALOG=null; startOnboarding(); } }; }
+function renderAccount(){ setChrome('Account','',true); view.innerHTML='<div class="pad">'+acctRow()+'<button class="btn block" id="acEdit" style="margin-bottom:10px">Edit my setup</button><button class="prosp-btn" id="acOut" style="color:var(--crit);border-color:color-mix(in srgb,var(--crit) 30%,transparent)">Sign out</button></div>'; byId('acEdit').onclick=startEditProfile; byId('acOut').onclick=async()=>{ try{ await sb.auth.signOut(); }catch(_){}; PROFILE=null; ACTIVE_CATALOG=null; USER=null; renderAuth('signin'); }; }
 function startEditProfile(){ OB={type:PROFILE.type,name:PROFILE.name||'',company:PROFILE.company||'',email:PROFILE.email||'',catalogChoice:PROFILE.catalogChoice||'xpi',catalog:(PROFILE.catalog&&PROFILE.catalog.length)?PROFILE.catalog.map(p=>({name:p.name,solves:p.solves,price:p.price})):[{name:'',solves:'',price:''}],brand:PROFILE.brand||'#F2A93B'}; appbar.classList.remove('can-back'); setChrome('Setup','Edit',false); obType(); }
-function renderProspects(){ setChrome('Your prospects','',true); const list=loadProspects(); const rows=list.length?list.map(p=>'<div class="prospect" data-id="'+p.id+'"><div class="pscore">'+(p.score||'–')+'</div><div class="ai" style="flex:1;min-width:0"><div class="an">'+esc(p.name||'—')+'</div><div class="as">'+esc(p.loc||'')+'</div></div>'+I.arrow+'</div>').join(''):'<div class="home-note">No saved prospects yet — scan a business to start your pipeline.</div>'; view.innerHTML='<div class="pad"><div class="plist">'+rows+'</div></div>'; view.querySelectorAll('.prospect').forEach(el=>el.onclick=()=>{ const p=loadProspects().find(x=>x.id===el.dataset.id); if(p){ DB[p.id]=p.intel; renderIntel(p.id); } }); }
+async function renderProspects(){ setChrome('Your prospects','',true); view.innerHTML='<div class="pad"><div class="home-note">Loading your pipeline…</div></div>';
+  let list=[]; try{ const {data}=await sb.from('prospects').select('id,name,loc,score,intel,created_at').eq('account_id',PROFILE.id).order('created_at',{ascending:false}).limit(200); list=data||[]; }catch(_){}
+  const rows=list.length?list.map(p=>'<div class="prospect" data-id="'+p.id+'"><div class="pscore">'+(p.score||'–')+'</div><div class="ai" style="flex:1;min-width:0"><div class="an">'+esc(p.name||'—')+'</div><div class="as">'+esc(p.loc||'')+'</div></div>'+I.arrow+'</div>').join(''):'<div class="home-note">No saved prospects yet — scan a business to start your pipeline.</div>';
+  view.innerHTML='<div class="pad"><div class="plist">'+rows+'</div></div>';
+  view.querySelectorAll('.prospect').forEach(el=>el.onclick=()=>{ const p=list.find(x=>String(x.id)===el.dataset.id); if(p&&p.intel){ DB['pv'+p.id]=p.intel; renderIntel('pv'+p.id); } }); }
 
 /* ---------- HOME ---------- */
 function renderHome(){
@@ -834,7 +865,7 @@ function renderHome(){
       ${capBtn('store','Storefront')}
       ${capBtn('voice','Voice')}
     </div>
-    ${loadProspects().length?'<div class="section-h">Your pipeline</div><button class="prosp-btn" id="provBtn">'+I.grid+' View saved prospects ('+loadProspects().length+')</button>':''}
+    <div class="section-h">Your pipeline</div><button class="prosp-btn" id="provBtn">${I.grid} View saved prospects</button>
     <div class="home-note">Point it at any business — a website, a name, a card photo, or your voice. Live research in ~30 seconds.</div>
     <input id="cardFile" type="file" accept="image/*" style="display:none">
   </div>`;
@@ -1174,9 +1205,8 @@ fetch('/api/config').then(r=>r.json()).then(cfg=>{ SERVER_CFG={...SERVER_CFG,...
   .finally(()=>{
     setAccent(SERVER_CFG.accent);
     const mk=document.querySelector('#appbar .mark'); if(mk&&SERVER_CFG.wordmark) mk.innerHTML=SERVER_CFG.wordmark;
-    const prof=loadProfile();
-    if(prof){ applyProfile(prof); renderHome(); }
-    else { startOnboarding(); }
+    initSupabase();
+    bootAccount();
   });
 
 /* ---------- intro sequence dismiss ---------- */
