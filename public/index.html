@@ -416,6 +416,23 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
 .cl-tip svg{width:14px;height:14px;color:var(--faint);flex:none;margin-top:1px}
 .btn.ghost{background:var(--surface-2);color:var(--text);border:1px solid var(--line)}
 
+/* ---------- Plans / billing ---------- */
+.plan-badge-row{font-size:12.5px;color:var(--muted);margin:2px 2px 14px}
+.plan-badge-row b{color:var(--text);font-weight:700}
+.plans{display:flex;flex-direction:column;gap:12px}
+.plan{border:1px solid var(--line);border-radius:16px;background:var(--surface);padding:15px 15px 14px;box-shadow:var(--shadow)}
+.plan.cur{border-color:color-mix(in srgb,var(--accent) 55%,transparent);box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 35%,transparent),var(--shadow)}
+.plan-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.plan-name{font-family:"Archivo",sans-serif;font-weight:800;font-size:17px;color:var(--text);display:flex;align-items:center;gap:7px}
+.plan-wl{font-family:"IBM Plex Mono",monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:20px;padding:3px 7px}
+.plan-price{font-family:"Archivo",sans-serif;font-weight:800;font-size:19px;color:var(--text);white-space:nowrap}
+.plan-price span{font-size:12px;font-weight:600;color:var(--faint)}
+.plan-blurb{font-size:12.5px;color:var(--muted);margin:5px 0 10px;line-height:1.45}
+.plan-feats{list-style:none;margin:0 0 12px;padding:0;display:flex;flex-direction:column;gap:6px}
+.plan-feats li{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text)}
+.plan-feats li svg{width:14px;height:14px;color:var(--verified);flex:none}
+.usage-note{font-size:11.5px;color:var(--muted);text-align:center;margin:0 0 12px;font-family:"IBM Plex Mono",monospace}
+
 /* ---------- hero / intro ---------- */
 .hero{padding:26px 20px 6px;position:relative}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:7px;font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:14px;border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);padding:5px 10px;border-radius:20px;background:var(--accent-soft)}
@@ -835,7 +852,7 @@ async function bootAccount(){ if(!sb){ view.innerHTML='<div class="pad"><div cla
 async function loadAccountAndRoute(){ let acct=null; try{ const {data}=await sb.from('accounts').select('*').limit(1); acct=(data&&data[0])||null; }catch(_){}
   if(!acct){ startOnboarding(); return; }
   let prods=[]; try{ const {data}=await sb.from('products').select('*').eq('account_id',acct.id).order('created_at'); prods=data||[]; }catch(_){}
-  PROFILE={id:acct.id,type:acct.type,name:acct.name,company:acct.company,brand:acct.brand,catalogChoice:acct.catalog_choice,catalog:prods.map(p=>({pkey:p.pkey,name:p.name,solves:p.solves,price:p.price,verticals:p.verticals||[]}))};
+  PROFILE={id:acct.id,type:acct.type,name:acct.name,company:acct.company,brand:acct.brand,catalogChoice:acct.catalog_choice,plan:acct.plan||null,subStatus:acct.sub_status||null,catalog:prods.map(p=>({pkey:p.pkey,name:p.name,solves:p.solves,price:p.price,verticals:p.verticals||[]}))};
   applyProfile(PROFILE); renderHome(); }
 function renderAuth(mode){ mode=mode||'signin'; appbar.classList.remove('can-back'); setChrome('Account',mode==='signin'?'Sign in':'Create account',false);
   view.innerHTML='<div class="ob"><div class="ob-body"><div class="ob-hero">'+I.avo+'</div><h2 class="ob-h">'+(mode==='signin'?'Welcome back':'Create your account')+'</h2><p class="ob-p">'+(mode==='signin'?'Sign in to your BD Intelligence workspace.':'One login for your workspace — synced across your devices.')+'</p><div class="ob-label">Email</div><input class="ob-input" id="auEmail" type="email" autocomplete="email" placeholder="you@business.com"><div class="ob-label">Password</div><input class="ob-input" id="auPass" type="password" placeholder="6+ characters"><div id="auErr" style="font-size:12.5px;min-height:16px;color:var(--crit)"></div><button class="btn block" id="auGo">'+(mode==='signin'?'Sign in':'Create account')+'</button><button class="ob-add" id="auSwap" style="border:none;color:var(--muted);margin-top:2px">'+(mode==='signin'?'New here? Create an account':'Already have an account? Sign in')+'</button></div></div>';
@@ -891,7 +908,34 @@ async function obFinish(){
     byId('obGo').onclick=()=>renderHome();
   }catch(e){ obShell('<div class="ob-hero" style="background:var(--crit-bg);color:var(--crit)">'+I.info+'</div><h2 class="ob-h">Couldn’t save</h2><p class="ob-p">'+esc((e&&e.message)||'Please try again.')+'</p><div class="ob-spacer"></div><button class="btn block" id="obGo">Back</button>',100); byId('obGo').onclick=obBrand; } }
 function acctRow(){ if(!PROFILE) return ''; const who=PROFILE.company||PROFILE.name||'You'; const init=(who[0]||'B').toUpperCase(); const sub=PROFILE.catalog?('Selling '+PROFILE.catalog.length+' product'+(PROFILE.catalog.length>1?'s':'')):'Selling XPI products'; return '<div class="acct"><div class="av">'+esc(init)+'</div><div class="ai"><div class="an">'+esc(who)+'</div><div class="as">'+esc(sub)+'</div></div><button class="abtn" id="acctBtn">Setup</button></div>'; }
-function renderAccount(){ setChrome('Account','',true); view.innerHTML='<div class="pad">'+acctRow()+'<button class="btn block" id="acEdit" style="margin-bottom:10px">Edit my setup</button><button class="prosp-btn" id="acOut" style="color:var(--crit);border-color:color-mix(in srgb,var(--crit) 30%,transparent)">Sign out</button></div>'; byId('acEdit').onclick=startEditProfile; byId('acOut').onclick=async()=>{ try{ await sb.auth.signOut(); }catch(_){}; PROFILE=null; ACTIVE_CATALOG=null; USER=null; renderAuth('signin'); }; }
+function planLabel(){ if(!PROFILE||!PROFILE.plan) return 'Free'; const n={solo:'Solo',team:'Team',agency:'Agency'}[PROFILE.plan]||PROFILE.plan; return n+(PROFILE.subStatus&&PROFILE.subStatus!=='active'?' ('+PROFILE.subStatus+')':''); }
+function renderAccount(){ setChrome('Account','',true); view.innerHTML='<div class="pad">'+acctRow()+'<div class="plan-badge-row">Current plan <b>'+esc(planLabel())+'</b></div><button class="btn block" id="acEdit" style="margin-bottom:10px">Edit my setup</button><button class="prosp-btn" id="acPlans" style="margin-bottom:10px">'+I.grid+' Plans &amp; billing</button><button class="prosp-btn" id="acOut" style="color:var(--crit);border-color:color-mix(in srgb,var(--crit) 30%,transparent)">Sign out</button></div>'; byId('acEdit').onclick=startEditProfile; byId('acPlans').onclick=renderPlans; byId('acOut').onclick=async()=>{ try{ await sb.auth.signOut(); }catch(_){}; PROFILE=null; ACTIVE_CATALOG=null; USER=null; renderAuth('signin'); }; }
+async function renderPlans(){ setChrome('Plans & billing','',true); view.innerHTML='<div class="pad"><div class="home-note">Loading plans…</div></div>';
+  let data={plans:[],configured:false}, me={plan:null,status:null,used:0,cap:null};
+  try{ data=await (await fetch('/api/billing/plans')).json(); }catch(_){}
+  try{ me=await (await fetch('/api/billing/me',{headers:await authHeaders()})).json(); }catch(_){}
+  const cur=me.plan;
+  const cards=(data.plans||[]).map(p=>{ const isCur=cur===p.key;
+    return '<div class="plan'+(isCur?' cur':'')+'">'+
+      '<div class="plan-top"><div class="plan-name">'+esc(p.name)+(p.whitelabel?'<span class="plan-wl">white-label</span>':'')+'</div><div class="plan-price">'+esc(p.price)+'<span>'+esc(p.per)+'</span></div></div>'+
+      '<div class="plan-blurb">'+esc(p.blurb)+'</div>'+
+      '<ul class="plan-feats">'+p.features.map(f=>'<li>'+I.check+esc(f)+'</li>').join('')+'</ul>'+
+      (isCur?'<button class="btn ghost block" disabled>Current plan</button>':'<button class="btn block" data-plan="'+p.key+'">'+(cur?'Switch to '+esc(p.name):'Choose '+esc(p.name))+'</button>')+
+    '</div>'; }).join('');
+  const usage = (me.cap!=null)?'<div class="usage-note">'+(me.used||0)+' / '+me.cap+' scans used this month</div>':'';
+  const notCfg = !data.configured?'<div class="home-note" style="border-color:color-mix(in srgb,var(--accent) 32%,transparent)">Billing isn’t switched on yet — this is the plan lineup that will be available. Nothing is charged.</div>':'';
+  const manage = (data.configured&&cur)?'<button class="prosp-btn" id="planManage" style="margin-top:12px">'+I.grid+' Manage billing</button>':'';
+  view.innerHTML='<div class="pad">'+notCfg+usage+'<div class="plans">'+cards+'</div>'+manage+'<div class="home-note" style="font-size:11px">Billed securely via Stripe. Cancel anytime.</div></div>';
+  view.querySelectorAll('[data-plan]').forEach(b=>b.onclick=()=>startCheckout(b.dataset.plan,b));
+  const mg=byId('planManage'); if(mg) mg.onclick=openPortal;
+}
+async function startCheckout(plan,btn){ if(btn){ btn.disabled=true; btn.textContent='Redirecting…'; }
+  try{ const r=await fetch('/api/billing/checkout',{method:'POST',headers:{'Content-Type':'application/json',...(await authHeaders())},body:JSON.stringify({plan})});
+    const d=await r.json(); if(d.error) throw new Error(d.message||d.error); window.location.href=d.url;
+  }catch(e){ alert(e.message||'Could not start checkout.'); renderPlans(); } }
+async function openPortal(){ try{ const r=await fetch('/api/billing/portal',{method:'POST',headers:{'Content-Type':'application/json',...(await authHeaders())}});
+    const d=await r.json(); if(d.error) throw new Error(d.message||d.error); window.location.href=d.url;
+  }catch(e){ alert(e.message||'Could not open billing.'); } }
 function startEditProfile(){ OB={type:PROFILE.type,name:PROFILE.name||'',company:PROFILE.company||'',email:PROFILE.email||'',catalogChoice:PROFILE.catalogChoice||'xpi',catalog:(PROFILE.catalog&&PROFILE.catalog.length)?PROFILE.catalog.map(p=>({name:p.name,solves:p.solves,price:p.price})):[{name:'',solves:'',price:''}],brand:PROFILE.brand||'#F2A93B'}; appbar.classList.remove('can-back'); setChrome('Setup','Edit',false); obType(); }
 async function renderProspects(){ setChrome('Your prospects','',true); view.innerHTML='<div class="pad"><div class="home-note">Loading your pipeline…</div></div>';
   let list=[]; try{ const {data}=await sb.from('prospects').select('id,name,loc,score,intel,created_at').eq('account_id',PROFILE.id).order('created_at',{ascending:false}).limit(200); list=data||[]; }catch(_){}
@@ -1351,8 +1395,17 @@ fetch('/api/config').then(r=>r.json()).then(cfg=>{ SERVER_CFG={...SERVER_CFG,...
     setAccent(SERVER_CFG.accent);
     const mk=document.querySelector('#appbar .mark'); if(mk&&SERVER_CFG.wordmark) mk.innerHTML=SERVER_CFG.wordmark;
     initSupabase();
+    maybeBillingReturn();
     bootAccount();
   });
+
+// After Stripe redirects back, confirm + clean the URL. The webhook flips the
+// plan a moment later, so we give it a beat then reload the profile.
+function maybeBillingReturn(){
+  const q=new URLSearchParams(location.search); const b=q.get('billing'); if(!b) return;
+  history.replaceState({},'',location.pathname);
+  if(b==='success') setTimeout(()=>{ try{ alert('Thanks! Your plan is being activated — it’ll show on your account in a few seconds.'); }catch(_){} }, 400);
+}
 
 /* ---------- intro sequence dismiss ---------- */
 (function(){
