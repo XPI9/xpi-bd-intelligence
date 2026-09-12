@@ -17,6 +17,9 @@ services:
     environment:
       BD_PROFILE: xpi
       PORT: "3000"
+    dns:
+      - "1.1.1.1"
+      - "8.8.8.8"
     ports:
       - "172.18.0.1:3200:3000"
 

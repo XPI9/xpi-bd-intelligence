@@ -50,6 +50,19 @@ const BRAND = CONFIG[PROFILE] || CONFIG.xpi;
 
 app.get('/api/config', (_req, res) => res.json(BRAND));
 
+app.get('/api/selftest', async (_req, res) => {
+  const out = {};
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/models', { headers: { 'x-api-key': process.env.ANTHROPIC_API_KEY || '', 'anthropic-version': '2023-06-01' } });
+    out.anthropic = { ok: true, status: r.status };
+  } catch (e) { out.anthropic = { ok: false, code: (e.cause && e.cause.code) || e.name, msg: e.message }; }
+  try {
+    const r = await fetch('https://1.1.1.1', { redirect: 'manual' });
+    out.internet_by_ip = { ok: true, status: r.status };
+  } catch (e) { out.internet_by_ip = { ok: false, code: (e.cause && e.cause.code) || e.name, msg: e.message }; }
+  res.json(out);
+});
+
 app.get('/api/health', (_req, res) => {
   res.json({
     ok: true,
