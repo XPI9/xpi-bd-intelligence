@@ -65,10 +65,10 @@ app.get('/api/catalog', (_req, res) => res.json(CATALOG));
 
 app.post('/api/research', async (req, res) => {
   if (!KEY_OK) return res.status(400).json({ error: 'no_api_key', message: 'Add your ANTHROPIC_API_KEY to .env and restart.' });
-  const { name, url } = req.body || {};
+  const { name, url, catalog } = req.body || {};
   if (!name && !url) return res.status(400).json({ error: 'bad_input', message: 'Provide a business name or website.' });
   try {
-    const intel = await runResearch({ name, url });
+    const intel = await runResearch({ name, url, catalog: Array.isArray(catalog) ? catalog.slice(0, 40) : null });
     res.json(intel);
   } catch (e) {
     console.error('[research]', e);

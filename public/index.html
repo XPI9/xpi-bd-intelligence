@@ -403,6 +403,8 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
 .intro-mark .ring{position:absolute;inset:0;border-radius:50%;border:2px solid color-mix(in srgb,var(--accent) 55%,transparent);box-shadow:0 0 34px color-mix(in srgb,var(--accent) 40%,transparent),inset 0 0 22px color-mix(in srgb,var(--accent) 25%,transparent);animation:iSpin 3.4s linear infinite}
 .intro-mark .ring::after{content:"";position:absolute;top:-3px;left:50%;width:6px;height:6px;border-radius:50%;background:var(--accent);transform:translateX(-50%);box-shadow:0 0 12px 3px var(--accent)}
 .intro-mark .ico{color:var(--accent)}.intro-mark .ico svg{width:32px;height:32px}
+.intro-mark .bdmark{font-family:"Archivo";font-weight:800;font-size:27px;letter-spacing:-.03em;color:var(--accent);animation:bdpulse 1.7s ease-in-out infinite}
+@keyframes bdpulse{0%,100%{opacity:.72;text-shadow:0 0 8px color-mix(in srgb,var(--accent) 35%,transparent)}50%{opacity:1;text-shadow:0 0 26px color-mix(in srgb,var(--accent) 85%,transparent),0 0 10px color-mix(in srgb,var(--accent) 60%,transparent)}}
 .intro-word{font-family:"Archivo";font-weight:800;font-size:clamp(24px,7.5vw,38px);letter-spacing:-.02em;opacity:0;transform:translateY(14px);animation:iRise .7s .35s ease forwards}
 .intro-word span{color:var(--accent)}
 .intro-pipe{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-top:18px}
@@ -443,6 +445,48 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
 .rstatus{text-align:center;font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.05em;color:var(--muted);margin-top:26px;min-height:16px}
 .rstatus b{color:var(--accent);font-weight:600}
 
+/* ---------- onboarding ---------- */
+.ob{display:flex;flex-direction:column;min-height:100%}
+.ob-bar{height:3px;background:var(--line-soft);flex:none}
+.ob-bar i{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease}
+.ob-body{padding:28px 20px 28px;display:flex;flex-direction:column;gap:13px;flex:1;min-height:calc(100% - 3px)}
+.ob-hero{width:56px;height:56px;border-radius:16px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:2px}
+.ob-hero svg{width:28px;height:28px}
+.ob-h{font-family:"Archivo";font-weight:800;font-size:23px;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.ob-p{color:var(--muted);font-size:13.5px;line-height:1.5;margin:0}
+.ob-label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin:6px 0 -5px}
+.ob-input{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:13px;color:var(--text);font-family:"IBM Plex Sans";font-size:14px;width:100%}
+.ob-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
+.ob-choice{display:flex;gap:10px}
+.ob-opt{flex:1;background:var(--surface-2);border:1px solid var(--line-soft);border-radius:14px;padding:15px 12px;cursor:pointer;text-align:center;transition:border-color .15s,background .15s}
+.ob-opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+.ob-opt .oi{color:var(--accent);display:flex;justify-content:center;margin-bottom:8px}.ob-opt .oi svg{width:22px;height:22px}
+.ob-opt .ot{font-weight:700;font-size:13.5px}.ob-opt .od{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.35}
+.prow{display:flex;gap:8px;align-items:flex-start;background:var(--surface-2);border:1px solid var(--line-soft);border-radius:12px;padding:10px;margin-bottom:8px}
+.prow .pfields{display:flex;flex-direction:column;gap:6px;flex:1;min-width:0}
+.prow input{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:9px 10px;color:var(--text);font-size:13px;width:100%}
+.prow input:focus{outline:none;border-color:var(--accent)}
+.prow .prm{border:1px solid var(--line);background:var(--surface);color:var(--faint);border-radius:9px;width:30px;height:30px;cursor:pointer;flex:none;font-size:13px}
+.ob-add{border:1px dashed var(--line);background:none;color:var(--muted);border-radius:11px;padding:11px;cursor:pointer;font-size:13px;font-weight:500;width:100%}
+.ob-add:hover{border-color:var(--accent);color:var(--text)}
+.ob-swatches{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+.ob-sw{width:36px;height:36px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .1s}
+.ob-sw.sel{border-color:var(--text);transform:scale(1.12)}
+.ob-spacer{flex:1;min-height:14px}
+/* account + prospects */
+.acct{display:flex;align-items:center;gap:11px;background:var(--surface-2);border:1px solid var(--line-soft);border-radius:14px;padding:11px 13px;margin-bottom:14px}
+.acct .av{width:36px;height:36px;border-radius:11px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-family:"Archivo";font-weight:800;font-size:15px;flex:none}
+.acct .ai{flex:1;min-width:0}.acct .an{font-weight:600;font-size:13.5px}.acct .as{font-size:11.5px;color:var(--muted)}
+.acct .abtn{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:9px;padding:7px 11px;font-size:11.5px;cursor:pointer;flex:none}
+.acct .abtn:hover{color:var(--text);border-color:var(--faint)}
+.plist .prospect{display:flex;align-items:center;gap:11px;background:var(--surface-2);border:1px solid var(--line-soft);border-radius:13px;padding:11px 12px;cursor:pointer;margin-bottom:8px;color:var(--faint)}
+.plist .prospect:hover{border-color:var(--accent)}
+.plist .prospect svg{width:18px;height:18px}
+.pscore{width:38px;height:38px;border-radius:11px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-family:"Archivo";font-weight:800;font-size:14px;flex:none}
+.prospect .an{font-weight:600;font-size:13.5px;color:var(--text)}.prospect .as{font-size:11.5px;color:var(--muted)}
+.prosp-btn{width:100%;background:var(--surface-2);color:var(--text);border:1px solid var(--line-soft);border-radius:12px;padding:12px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.prosp-btn:hover{border-color:var(--accent)}.prosp-btn svg{width:15px;height:15px;color:var(--accent)}
+
 @media (prefers-reduced-motion:reduce){
   #fx{display:none}
   #intro{display:none}
@@ -455,7 +499,7 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
 <canvas id="fx" aria-hidden="true"></canvas>
 <div id="intro">
   <div class="intro-inner">
-    <div class="intro-mark"><span class="ring"></span><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M3 12h18"/></svg></span></div>
+    <div class="intro-mark"><span class="ring"></span><span class="ico bdmark">BD</span></div>
     <div class="intro-word">BD<span>·</span>INTELLIGENCE</div>
     <div class="intro-pipe"><i>Capture</i><i>Research</i><i>Evidence</i><i>Score</i><i>Play</i></div>
     <div class="intro-tag">See the opportunity before you make the pitch.</div>
@@ -718,6 +762,50 @@ function startVoice(){
   try{ r.start(); }catch(_){ if(inp) inp.focus(); }
 }
 
+/* ================= ONBOARDING + ACCOUNT (local, testable) ================= */
+const PKEY_PROFILE='bdi_profile_v1', PKEY_PROSPECTS='bdi_prospects_v1';
+let PROFILE=null, ACTIVE_CATALOG=null, OB=null;
+const BRAND_SWATCHES=['#F2A93B','#3B82F6','#22C3B8','#8B5CF6','#EF4444','#10B981','#EC4899','#0EA5E9'];
+function byId(id){ return document.getElementById(id); }
+function loadProfile(){ try{ return JSON.parse(localStorage.getItem(PKEY_PROFILE)||'null'); }catch(_){ return null; } }
+function persistProfile(p){ try{ localStorage.setItem(PKEY_PROFILE,JSON.stringify(p)); }catch(_){}}
+function clearProfile(){ try{ localStorage.removeItem(PKEY_PROFILE); }catch(_){}}
+function loadProspects(){ try{ return JSON.parse(localStorage.getItem(PKEY_PROSPECTS)||'[]'); }catch(_){ return []; } }
+function saveProspect(intel){ try{ const l=loadProspects(); l.unshift({id:'sv'+Date.now(),name:intel.name,loc:intel.loc,score:intel.score,at:Date.now(),intel}); localStorage.setItem(PKEY_PROSPECTS,JSON.stringify(l.slice(0,150))); }catch(_){}}
+function setAccent(c){ const r=document.documentElement.style; if(c){ r.setProperty('--accent',c); r.setProperty('--accent-soft','color-mix(in srgb, '+c+' 16%, transparent)'); } }
+function applyProfile(p){
+  PROFILE=p||null; ACTIVE_CATALOG=(p&&p.catalog&&p.catalog.length)?p.catalog:null;
+  setAccent((p&&p.brand)||SERVER_CFG.accent);
+  const mk=document.querySelector('#appbar .mark');
+  if(mk){ if(p&&p.company){ mk.textContent=p.company; } else if(p&&p.name){ mk.textContent=p.name.split(' ')[0]+' · BD'; } else { mk.innerHTML=(SERVER_CFG.wordmark||'BD<span>·</span>Intel'); } }
+}
+function startOnboarding(){ OB={type:'company',name:'',company:'',email:'',catalogChoice:'own',catalog:[{name:'',solves:'',price:''}],brand:'#F2A93B'}; appbar.classList.remove('can-back'); setChrome('Setup','Welcome',false); obWelcome(); }
+function obShell(inner,pct){ view.innerHTML='<div class="ob"><div class="ob-bar"><i style="width:'+pct+'%"></i></div><div class="ob-body">'+inner+'</div></div>'; }
+function obWelcome(){ obShell('<div class="ob-hero">'+I.avo+'</div><h2 class="ob-h">Set up your workspace</h2><p class="ob-p">In under a minute, tune BD Intelligence to your business — your products, your brand. Then turn any business into a researched prospect.</p><div class="ob-spacer"></div><button class="btn block" id="obNext">Get started '+I.arrow+'</button>',12); byId('obNext').onclick=obType; }
+function obType(){ obShell('<h2 class="ob-h">Who is this for?</h2><p class="ob-p">This tailors the setup and language.</p><div class="ob-choice"><div class="ob-opt '+(OB.type==='company'?'sel':'')+'" data-t="company"><div class="oi">'+I.grid+'</div><div class="ot">A company</div><div class="od">My team sells to businesses</div></div><div class="ob-opt '+(OB.type==='individual'?'sel':'')+'" data-t="individual"><div class="oi">'+I.name+'</div><div class="ot">Just me</div><div class="od">I sell on my own</div></div></div><div class="ob-spacer"></div><button class="btn block" id="obNext">Continue '+I.arrow+'</button>',30);
+  view.querySelectorAll('.ob-opt').forEach(o=>o.onclick=()=>{ OB.type=o.dataset.t; view.querySelectorAll('.ob-opt').forEach(x=>x.classList.remove('sel')); o.classList.add('sel'); }); byId('obNext').onclick=obDetails; }
+function obDetails(){ const isCo=OB.type==='company';
+  obShell('<h2 class="ob-h">'+(isCo?'Your company':'About you')+'</h2><div class="ob-label">Your name</div><input class="ob-input" id="obName" placeholder="e.g. Kedrick" value="'+esc(OB.name)+'">'+(isCo?'<div class="ob-label">Company name</div><input class="ob-input" id="obCo" placeholder="e.g. Momentum BD" value="'+esc(OB.company)+'">':'')+'<div class="ob-label">Email (optional)</div><input class="ob-input" id="obEmail" type="email" placeholder="you@business.com" value="'+esc(OB.email)+'"><div class="ob-spacer"></div><button class="btn block" id="obNext">Continue '+I.arrow+'</button>',48);
+  byId('obNext').onclick=()=>{ OB.name=(byId('obName').value||'').trim(); if(isCo) OB.company=(byId('obCo').value||'').trim(); OB.email=(byId('obEmail').value||'').trim(); if(!OB.name){ byId('obName').focus(); return; } obCatalog(); }; }
+function obCatalog(){ const own=OB.catalogChoice==='own';
+  const rows=OB.catalog.map((p,i)=>'<div class="prow"><div class="pfields"><input data-f="name" data-i="'+i+'" placeholder="Product / service name" value="'+esc(p.name)+'"><input data-f="solves" data-i="'+i+'" placeholder="What problem it fixes (the pain)" value="'+esc(p.solves)+'"><input data-f="price" data-i="'+i+'" placeholder="Price (e.g. $199/mo)" value="'+esc(p.price)+'"></div><button class="prm" data-rm="'+i+'">✕</button></div>').join('');
+  obShell('<h2 class="ob-h">What do you sell?</h2><p class="ob-p">The AI recommends only from your list — matched to each prospect’s pain. Edit anytime.</p><div class="ob-choice"><div class="ob-opt '+(own?'sel':'')+'" data-c="own"><div class="ot">My own products</div><div class="od">Add them below</div></div><div class="ob-opt '+(!own?'sel':'')+'" data-c="xpi"><div class="ot">XPI products</div><div class="od">Use the XPI catalog</div></div></div>'+(own?('<div id="prows">'+rows+'</div><button class="ob-add" id="obAdd">+ Add another product</button>'):'')+'<div class="ob-spacer"></div><button class="btn block" id="obNext">Continue '+I.arrow+'</button>',72);
+  view.querySelectorAll('.ob-opt').forEach(o=>o.onclick=()=>{ OB.catalogChoice=o.dataset.c; obCatalog(); });
+  if(own){ view.querySelectorAll('#prows input').forEach(inp=>inp.oninput=()=>{ OB.catalog[+inp.dataset.i][inp.dataset.f]=inp.value; }); view.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{ OB.catalog.splice(+b.dataset.rm,1); if(!OB.catalog.length) OB.catalog.push({name:'',solves:'',price:''}); obCatalog(); }); byId('obAdd').onclick=()=>{ OB.catalog.push({name:'',solves:'',price:''}); obCatalog(); }; }
+  byId('obNext').onclick=()=>{ if(OB.catalogChoice==='own'){ if(!OB.catalog.filter(p=>(p.name||'').trim()).length){ alert('Add at least one product, or choose XPI products.'); return; } } obBrand(); }; }
+function obBrand(){ obShell('<h2 class="ob-h">Pick your color</h2><p class="ob-p">Your brand accent across the app.</p><div class="ob-swatches">'+BRAND_SWATCHES.map(c=>'<div class="ob-sw '+(OB.brand===c?'sel':'')+'" data-c="'+c+'" style="background:'+c+'"></div>').join('')+'</div><div class="ob-spacer"></div><button class="btn block" id="obNext">Finish setup '+I.check+'</button>',90);
+  view.querySelectorAll('.ob-sw').forEach(s=>s.onclick=()=>{ OB.brand=s.dataset.c; setAccent(s.dataset.c); view.querySelectorAll('.ob-sw').forEach(x=>x.classList.remove('sel')); s.classList.add('sel'); }); byId('obNext').onclick=obFinish; }
+function obFinish(){
+  const cat=OB.catalogChoice==='own'?OB.catalog.filter(p=>(p.name||'').trim()).map((p,i)=>({pkey:'p'+(i+1),name:p.name.trim(),solves:(p.solves||'').trim()||p.name.trim(),price:(p.price||'').trim()||'—',verticals:[]})):null;
+  const profile={type:OB.type,name:OB.name,company:OB.type==='company'?OB.company:'',email:OB.email,brand:OB.brand,catalogChoice:OB.catalogChoice,catalog:cat,at:Date.now()};
+  persistProfile(profile); applyProfile(profile);
+  obShell('<div class="ob-hero" style="background:var(--verified-bg);color:var(--verified)">'+I.check+'</div><h2 class="ob-h">You’re all set'+(OB.name?', '+esc(OB.name.split(' ')[0]):'')+'.</h2><p class="ob-p">'+(cat?('BD Intelligence will recommend your '+cat.length+' product'+(cat.length>1?'s':'')+' to every prospect it researches.'):'BD Intelligence will recommend XPI products to every prospect.')+'</p><div class="ob-spacer"></div><button class="btn block" id="obGo">Enter BD Intelligence '+I.arrow+'</button>',100);
+  byId('obGo').onclick=()=>renderHome(); }
+function acctRow(){ if(!PROFILE) return ''; const who=PROFILE.company||PROFILE.name||'You'; const init=(who[0]||'B').toUpperCase(); const sub=PROFILE.catalog?('Selling '+PROFILE.catalog.length+' product'+(PROFILE.catalog.length>1?'s':'')):'Selling XPI products'; return '<div class="acct"><div class="av">'+esc(init)+'</div><div class="ai"><div class="an">'+esc(who)+'</div><div class="as">'+esc(sub)+'</div></div><button class="abtn" id="acctBtn">Setup</button></div>'; }
+function renderAccount(){ setChrome('Account','',true); view.innerHTML='<div class="pad">'+acctRow()+'<button class="btn block" id="acEdit" style="margin-bottom:10px">Edit my setup</button><button class="prosp-btn" id="acOut" style="color:var(--crit);border-color:color-mix(in srgb,var(--crit) 30%,transparent)">Sign out &amp; reset this device</button></div>'; byId('acEdit').onclick=startEditProfile; byId('acOut').onclick=()=>{ if(confirm('Sign out and clear your setup on this device?')){ clearProfile(); PROFILE=null; ACTIVE_CATALOG=null; startOnboarding(); } }; }
+function startEditProfile(){ OB={type:PROFILE.type,name:PROFILE.name||'',company:PROFILE.company||'',email:PROFILE.email||'',catalogChoice:PROFILE.catalogChoice||'xpi',catalog:(PROFILE.catalog&&PROFILE.catalog.length)?PROFILE.catalog.map(p=>({name:p.name,solves:p.solves,price:p.price})):[{name:'',solves:'',price:''}],brand:PROFILE.brand||'#F2A93B'}; appbar.classList.remove('can-back'); setChrome('Setup','Edit',false); obType(); }
+function renderProspects(){ setChrome('Your prospects','',true); const list=loadProspects(); const rows=list.length?list.map(p=>'<div class="prospect" data-id="'+p.id+'"><div class="pscore">'+(p.score||'–')+'</div><div class="ai" style="flex:1;min-width:0"><div class="an">'+esc(p.name||'—')+'</div><div class="as">'+esc(p.loc||'')+'</div></div>'+I.arrow+'</div>').join(''):'<div class="home-note">No saved prospects yet — scan a business to start your pipeline.</div>'; view.innerHTML='<div class="pad"><div class="plist">'+rows+'</div></div>'; view.querySelectorAll('.prospect').forEach(el=>el.onclick=()=>{ const p=loadProspects().find(x=>x.id===el.dataset.id); if(p){ DB[p.id]=p.intel; renderIntel(p.id); } }); }
+
 /* ---------- HOME ---------- */
 function renderHome(){
   current=null;
@@ -730,6 +818,7 @@ function renderHome(){
     ${circuitHTML('ambient')}
   </div>
   <div class="pad">
+    ${acctRow()}
     <div class="scanbar">
       <input id="urlIn" placeholder="Enter a website or business name…" autocomplete="off" spellcheck="false">
       <button class="btn" id="urlGo">${I.scan} Scan</button>
@@ -742,6 +831,7 @@ function renderHome(){
       ${capBtn('store','Storefront')}
       ${capBtn('voice','Voice')}
     </div>
+    ${loadProspects().length?'<div class="section-h">Your pipeline</div><button class="prosp-btn" id="provBtn">'+I.grid+' View saved prospects ('+loadProspects().length+')</button>':''}
     <div class="home-note">Point it at any business — a website, a name, a card photo, or your voice. Live research in ~30 seconds.</div>
     <input id="cardFile" type="file" accept="image/*" style="display:none">
   </div>`;
@@ -759,6 +849,8 @@ function renderHome(){
   const runUrl=()=>{ const v=(inp.value||'').trim(); if(!v) return; const looksUrl=/\./.test(v)&&!/\s/.test(v); startLive({ name: looksUrl?'':v, url: looksUrl?v:'' }); };
   go.onclick=runUrl; inp.onkeydown=e=>{ if(e.key==='Enter') runUrl(); };
   const cf=document.getElementById('cardFile'); if(cf) cf.onchange=e=>{ const f=e.target.files&&e.target.files[0]; if(f) startCard(f); e.target.value=''; };
+  const ab=byId('acctBtn'); if(ab) ab.onclick=renderAccount;
+  const pb=byId('provBtn'); if(pb) pb.onclick=renderProspects;
 }
 function capBtn(k,lb){ return `<div class="cap" data-cap="${k}"><div class="ic">${I[k]}</div><div class="lb">${lb}</div></div>`; }
 function sampleRow(id){ const b=DB[id]; return `<div class="sample" data-sample="${id}"><div class="logo" style="background:${b.color}">${b.initials}</div><div class="info"><div class="nm">${b.name}</div><div class="mt">${b.loc}</div></div><div class="go">${I.arrow}</div></div>`; }
@@ -775,9 +867,9 @@ function startSample(id){ const b=DB[id]; showResearch({ name:b.name, sub:b.loc,
 
 function startLive({name,url}){
   const disp=name||url;
-  const p=fetch('/api/research',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,url})})
+  const p=fetch('/api/research',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,url,catalog:ACTIVE_CATALOG})})
     .then(r=>r.json()).then(d=>{ if(d.error) throw new Error(d.message||d.error); return d; });
-  showResearch({ name:disp, sub:'Live AI research', steps:LIVE_STEPS, id:'_live', dataPromise:p });
+  showResearch({ name:disp, sub:'Live AI research', id:'_live', dataPromise:p });
 }
 
 async function startCard(file){
@@ -787,10 +879,10 @@ async function startCard(file){
     .then(r=>r.json()).then(fields=>{ if(fields.error) throw new Error(fields.message||fields.error);
       const nm=fields.company||fields.name||''; const url=fields.website||'';
       if(!nm && !url) throw new Error('No business name or website could be read from that card.');
-      return fetch('/api/research',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:nm,url})})
+      return fetch('/api/research',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:nm,url,catalog:ACTIVE_CATALOG})})
         .then(r=>r.json()).then(d=>{ if(d.error) throw new Error(d.message||d.error); return d; });
     });
-  showResearch({ name:'Business card', sub:'Reading card…', steps:CARD_STEPS, id:'_live', dataPromise:p });
+  showResearch({ name:'Business card', sub:'Reading card…', id:'_live', dataPromise:p });
 }
 function fileToBase64(file){ return new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(String(fr.result).split(',')[1]); fr.onerror=rej; fr.readAsDataURL(file); }); }
 
@@ -826,7 +918,7 @@ async function showResearch({name,sub,id,dataPromise}){
   }
   while(!data && !err){ await sleep(150); }
   if(err){ showError(err.message||'Research failed.'); return; }
-  DB[id]=data; renderIntel(id);
+  DB[id]=data; if(id==='_live') saveProspect(data); renderIntel(id);
 }
 
 function showError(msg){
@@ -1050,7 +1142,7 @@ const BRANDS = {
 let activeBrand='xpi';
 // Server-supplied brand profile (falls back to XPI defaults if opened without the server)
 let SERVER_CFG={ accent:null, wordmark:'XPI<span>·</span>Intel', productLabel:'XPI match', showWhiteLabel:true };
-function catLabel(){ return (activeBrand==='xpi') ? (SERVER_CFG.productLabel||BRANDS.xpi.catName) : BRANDS[activeBrand].catName; }
+function catLabel(){ if(PROFILE&&PROFILE.catalog&&PROFILE.catalog.length) return 'Recommended'; return (activeBrand==='xpi') ? (SERVER_CFG.productLabel||BRANDS.xpi.catName) : BRANDS[activeBrand].catName; }
 function prodFor(o){ const cat=BRANDS[activeBrand].catalog; if(cat==='xpi'||!o.pkey) return {n:o.product,p:o.price}; const c=CATALOG[cat][o.pkey]; return c?c:{n:o.product,p:o.price}; }
 function playProd(b){ const cat=BRANDS[activeBrand].catalog; if(cat==='xpi'||!b.play.pkey) return b.play.product; const c=CATALOG[cat][b.play.pkey]; return c?(c.n+' — '+c.p):b.play.product; }
 function applyBrand(k){
@@ -1076,7 +1168,13 @@ function applyServerBranding(cfg){
 // Boot: pull the server profile (branding), then render. Works offline too (keeps XPI defaults).
 fetch('/api/config').then(r=>r.json()).then(cfg=>{ SERVER_CFG={...SERVER_CFG,...cfg}; applyServerBranding(SERVER_CFG); })
   .catch(()=>{})
-  .finally(()=>{ applyBrand('xpi'); });
+  .finally(()=>{
+    setAccent(SERVER_CFG.accent);
+    const mk=document.querySelector('#appbar .mark'); if(mk&&SERVER_CFG.wordmark) mk.innerHTML=SERVER_CFG.wordmark;
+    const prof=loadProfile();
+    if(prof){ applyProfile(prof); renderHome(); }
+    else { startOnboarding(); }
+  });
 
 /* ---------- intro sequence dismiss ---------- */
 (function(){
