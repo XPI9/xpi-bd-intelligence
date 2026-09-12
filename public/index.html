@@ -432,7 +432,7 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
 .circuit .nlabel{font-family:"IBM Plex Mono",monospace;font-size:8.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);text-align:center;line-height:1.1;transition:color .3s;white-space:nowrap}
 .circuit .wire{flex:1 1 auto;height:3px;background:var(--line-soft);border-radius:3px;margin-top:8px;position:relative;overflow:hidden;min-width:10px}
 .circuit .wire::before{content:"";position:absolute;top:0;bottom:0;left:-45%;width:45%;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0}
-.circuit .node.lit .orb{background:var(--accent);border-color:var(--accent);box-shadow:0 0 18px 3px color-mix(in srgb,var(--accent) 75%,transparent),inset 0 0 4px 1px rgba(255,255,255,.7)}
+.circuit .node.lit .orb{background:var(--accent);border-color:var(--accent);box-shadow:0 0 30px 6px color-mix(in srgb,var(--accent) 88%,transparent),inset 0 0 5px 1px rgba(255,255,255,.8)}
 .circuit .node.lit .nlabel{color:var(--text)}
 .circuit .node.lit .orb::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:1px solid color-mix(in srgb,var(--accent) 55%,transparent);animation:spark .55s ease-out}
 @keyframes spark{from{opacity:.95;transform:scale(.5)}to{opacity:0;transform:scale(1.75)}}
@@ -442,7 +442,7 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
 .circuit.ambient .orb{animation:ambpulse 4.8s ease-in-out infinite;animation-delay:calc(var(--i,0)*.5s)}
 .circuit.ambient .nlabel{animation:amblabel 4.8s ease-in-out infinite;animation-delay:calc(var(--i,0)*.5s)}
 .circuit.ambient .wire::before{opacity:1;animation:current 2.6s linear infinite;animation-delay:calc(var(--i,0)*.5s)}
-@keyframes ambpulse{0%,100%{background:var(--surface-3);border-color:var(--line);box-shadow:0 0 0 0 transparent}10%,18%{background:var(--accent);border-color:var(--accent);box-shadow:0 0 16px 3px color-mix(in srgb,var(--accent) 70%,transparent)}}
+@keyframes ambpulse{0%,100%{background:var(--surface-3);border-color:var(--line);box-shadow:0 0 0 0 transparent}10%,18%{background:var(--accent);border-color:var(--accent);box-shadow:0 0 30px 7px color-mix(in srgb,var(--accent) 85%,transparent),inset 0 0 4px 1px rgba(255,255,255,.6)}}
 @keyframes amblabel{0%,100%{color:var(--faint)}10%,18%{color:var(--text)}}
 .research-wrap{padding:26px 16px}
 .rstatus{text-align:center;font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.05em;color:var(--muted);margin-top:26px;min-height:16px}
@@ -1230,10 +1230,10 @@ fetch('/api/config').then(r=>r.json()).then(cfg=>{ SERVER_CFG={...SERVER_CFG,...
   function frame(){ const a=accent(); ctx.clearRect(0,0,w,h);
     for(const p of pts){ p.x+=p.vx;p.y+=p.vy; if(p.x<0||p.x>w)p.vx*=-1; if(p.y<0||p.y>h)p.vy*=-1; }
     const md=150*dpr;
-    for(let i=0;i<pts.length;i++){ for(let j=i+1;j<pts.length;j++){ const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.hypot(dx,dy); if(d<md){ ctx.strokeStyle=a; ctx.globalAlpha=(1-d/md)*.13; ctx.lineWidth=dpr; ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke(); } } }
-    ctx.globalAlpha=.55; ctx.fillStyle=a;
-    for(const p of pts){ ctx.beginPath(); ctx.arc(p.x,p.y,1.4*dpr,0,6.283); ctx.fill(); }
-    ctx.globalAlpha=1; requestAnimationFrame(frame);
+    for(let i=0;i<pts.length;i++){ for(let j=i+1;j<pts.length;j++){ const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.hypot(dx,dy); if(d<md){ ctx.strokeStyle=a; ctx.globalAlpha=(1-d/md)*.24; ctx.lineWidth=1.2*dpr; ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke(); } } }
+    ctx.shadowBlur=11*dpr; ctx.shadowColor=a; ctx.fillStyle=a;
+    for(const p of pts){ ctx.globalAlpha=.95; ctx.beginPath(); ctx.arc(p.x,p.y,1.8*dpr,0,6.283); ctx.fill(); }
+    ctx.shadowBlur=0; ctx.globalAlpha=1; requestAnimationFrame(frame);
   }
   init(); requestAnimationFrame(frame);
   let t; addEventListener('resize',()=>{ clearTimeout(t); t=setTimeout(init,180); });
