@@ -433,7 +433,8 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
 .circuit .nlabel{font-family:"IBM Plex Mono",monospace;font-size:8.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);text-align:center;line-height:1.1;transition:color .3s;white-space:nowrap}
 .circuit .wire{flex:1 1 auto;height:3px;background:var(--line-soft);border-radius:3px;margin-top:8px;position:relative;overflow:hidden;min-width:10px}
 .circuit .wire::before{content:"";position:absolute;top:0;bottom:0;left:-45%;width:45%;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0}
-.circuit .node.lit .orb{background:var(--accent);border-color:var(--accent);box-shadow:0 0 30px 6px color-mix(in srgb,var(--accent) 88%,transparent),inset 0 0 5px 1px rgba(255,255,255,.8)}
+.circuit .node.lit .orb{background:var(--accent);border-color:var(--accent);animation:litpulse 1.15s ease-in-out infinite}
+@keyframes litpulse{0%,100%{box-shadow:0 0 15px 3px color-mix(in srgb,var(--accent) 55%,transparent),inset 0 0 5px 1px rgba(255,255,255,.7);transform:scale(1)}50%{box-shadow:0 0 38px 9px color-mix(in srgb,var(--accent) 98%,transparent),inset 0 0 7px 2px rgba(255,255,255,.95);transform:scale(1.18)}}
 .circuit .node.lit .nlabel{color:var(--text)}
 .circuit .node.lit .orb::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:1px solid color-mix(in srgb,var(--accent) 55%,transparent);animation:spark .55s ease-out}
 @keyframes spark{from{opacity:.95;transform:scale(.5)}to{opacity:0;transform:scale(1.75)}}
