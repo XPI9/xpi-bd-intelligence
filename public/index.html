@@ -59,16 +59,23 @@
 *{box-sizing:border-box}
 html,body{margin:0}
 body{
-  background:
-    radial-gradient(1100px 600px at 82% -8%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 60%),
-    radial-gradient(900px 620px at 10% 108%, color-mix(in srgb, var(--infer) 10%, transparent), transparent 55%),
-    var(--ink);
+  background:var(--ink);
   color:var(--text);
   font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
   line-height:1.5; -webkit-font-smoothing:antialiased;
-  min-height:100vh;
+  height:100dvh; overflow:hidden;
 }
-.wrap{max-width:1180px; margin:0 auto; padding:34px 22px 70px}
+#fx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(1200px 720px at 80% -14%, color-mix(in srgb,var(--accent) 18%,transparent), transparent 55%),
+    radial-gradient(1000px 760px at 4% 116%, color-mix(in srgb,var(--infer) 15%,transparent), transparent 55%);}
+.app{position:relative;z-index:2;width:100%;max-width:540px;margin:0 auto;height:100dvh;
+  display:flex;flex-direction:column;overflow:hidden;
+  background:color-mix(in srgb,var(--surface) 82%, transparent);
+  -webkit-backdrop-filter:blur(22px) saturate(1.15);backdrop-filter:blur(22px) saturate(1.15);
+  border-inline:1px solid var(--line-soft);box-shadow:0 0 100px rgba(0,0,0,.42)}
+@media(min-width:600px){.app{height:min(940px,96dvh);margin-top:max(0px,calc((100dvh - min(940px,96dvh))/2));border-radius:28px;border:1px solid var(--line-soft)}}
 
 /* ---------- page header ---------- */
 .masthead{display:flex; align-items:flex-start; justify-content:space-between; gap:20px; flex-wrap:wrap; margin-bottom:30px}
@@ -78,12 +85,10 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
 .lede{color:var(--muted); font-size:clamp(14px,1.6vw,16px); max-width:60ch}
 .lede b{color:var(--text); font-weight:600}
 .head-right{display:flex; flex-direction:column; align-items:flex-end; gap:12px}
-.theme-btn{
-  appearance:none; border:1px solid var(--line); background:var(--surface); color:var(--muted);
-  font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase;
-  padding:8px 12px; border-radius:9px; cursor:pointer; display:flex; align-items:center; gap:7px;
-}
-.theme-btn:hover{color:var(--text); border-color:var(--faint)}
+.theme-btn{appearance:none;border:1px solid var(--line);background:var(--surface-2);color:var(--muted);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:7px 8px;border-radius:9px;cursor:pointer;display:flex;align-items:center;gap:6px;flex:none}
+.theme-btn:hover{color:var(--text);border-color:var(--faint)}
+.theme-btn .tlbl{display:none}
+@media(min-width:600px){.theme-btn .tlbl{display:inline}}
 .demo-tag{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); border:1px dashed var(--line); padding:6px 10px; border-radius:20px}
 
 .layout{display:grid; grid-template-columns:minmax(0,1fr) 330px; gap:38px; align-items:start}
@@ -111,26 +116,17 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
   position:relative; background:var(--surface); border-radius:34px; overflow:hidden;
   height:760px; display:flex; flex-direction:column;
 }
-.statusbar{
-  height:38px; flex:none; display:flex; align-items:center; justify-content:space-between;
-  padding:0 22px; font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--muted);
-}
-.statusbar .dots{display:flex; gap:4px; align-items:center}
-.statusbar .dots i{width:5px;height:5px;border-radius:50%;background:var(--faint);display:block}
-.appbar{
-  flex:none; padding:6px 18px 12px; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--line-soft);
-}
-.appbar .back{
-  width:32px;height:32px;border-radius:10px;border:1px solid var(--line); background:var(--surface-2);
-  display:none; align-items:center; justify-content:center; cursor:pointer; color:var(--text); flex:none;
-}
+.appbar{flex:none;position:relative;z-index:3;padding:13px 15px;display:flex;align-items:center;gap:11px;
+  border-bottom:1px solid var(--line-soft);background:color-mix(in srgb,var(--surface-2) 50%,transparent)}
+.appbar .back{width:32px;height:32px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);display:none;align-items:center;justify-content:center;cursor:pointer;color:var(--text);flex:none}
 .appbar .back svg{width:16px;height:16px}
 .appbar.can-back .back{display:flex}
-.appbar .mark{font-family:"Archivo";font-weight:800;font-size:15px;letter-spacing:-.01em}
+.brandwrap{display:flex;flex-direction:column;gap:1px;min-width:0}
+.appbar .mark{font-family:"Archivo";font-weight:800;font-size:16px;letter-spacing:-.02em}
 .appbar .mark span{color:var(--accent)}
-.appbar .sub{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.appbar .sub{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
 .appbar .grow{flex:1}
-.appbar .badge{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--muted);border:1px solid var(--line);padding:4px 8px;border-radius:20px}
+.appbar .badge{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--muted);border:1px solid var(--line);padding:4px 9px;border-radius:20px;white-space:nowrap}
 
 .view{flex:1; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch}
 .view::-webkit-scrollbar{width:8px}
@@ -370,82 +366,57 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
 .avo-alts{margin-top:8px;display:flex;flex-direction:column;gap:8px}
 .avo-alt{position:relative;border:1px solid var(--line-soft);border-radius:11px;padding:11px;background:var(--surface)}
 
+/* ---------- hero / intro ---------- */
+.hero{padding:26px 20px 6px;position:relative}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:7px;font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:14px;border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);padding:5px 10px;border-radius:20px;background:var(--accent-soft)}
+.hero-eyebrow svg{width:13px;height:13px}
+.hero-h{font-family:"Archivo";font-weight:800;font-size:clamp(27px,7.6vw,36px);line-height:1.03;letter-spacing:-.028em;margin:0 0 12px;text-wrap:balance}
+.hero-h em{font-style:normal;color:var(--accent)}
+.hero-sub{color:var(--muted);font-size:13.5px;line-height:1.5;margin:0 0 16px;max-width:44ch}
+.hero-sub b{color:var(--text);font-weight:600}
+/* animated agentic pipeline */
+.pipe{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:2px 0 4px}
+.pipe-step{display:flex;align-items:center;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);padding:4px 0;animation:pipefire 5s ease-in-out infinite}
+.pipe-step .pd{width:7px;height:7px;border-radius:50%;background:var(--line);flex:none;animation:pipedot 5s ease-in-out infinite}
+.pipe-arm{width:13px;height:1px;background:var(--line-soft);margin:0 5px}
+.pipe-step:nth-of-type(1),.pipe-step:nth-of-type(1) .pd{animation-delay:0s}
+.pipe-step:nth-of-type(2),.pipe-step:nth-of-type(2) .pd{animation-delay:.4s}
+.pipe-step:nth-of-type(3),.pipe-step:nth-of-type(3) .pd{animation-delay:.8s}
+.pipe-step:nth-of-type(4),.pipe-step:nth-of-type(4) .pd{animation-delay:1.2s}
+.pipe-step:nth-of-type(5),.pipe-step:nth-of-type(5) .pd{animation-delay:1.6s}
+@keyframes pipefire{0%,100%{color:var(--faint)}9%,17%{color:var(--text)}}
+@keyframes pipedot{0%,100%{background:var(--line);box-shadow:0 0 0 0 transparent}9%,19%{background:var(--accent);box-shadow:0 0 11px 1px color-mix(in srgb,var(--accent) 75%,transparent)}}
+/* scan bar */
+.scanbar{display:flex;gap:9px;margin:14px 0 16px}
+.scanbar input{flex:1;min-width:0;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:15px 15px;color:var(--text);font-family:"IBM Plex Sans";font-size:14px}
+.scanbar input::placeholder{color:var(--faint)}
+.scanbar input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+.scanbar .btn{padding:0 18px;border-radius:14px;font-size:14px;flex:none}
+.home-note{font-size:11px;color:var(--faint);text-align:center;line-height:1.4;margin-top:16px}
+
 @media (prefers-reduced-motion:reduce){
+  #fx{display:none}
   *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
 </style>
 </head>
 <body>
 
-<div class="wrap">
-  <div class="masthead">
-    <div class="brand">
-      <div class="eyebrow" id="pgEyebrow">XPI Solutions · Product Demo</div>
-      <h1 class="title" id="pgTitle">XPI BD Intelligence</h1>
-      <p class="lede" id="pgLede">See the opportunity before you make the pitch. Capture any business, and the platform researches it, backs every finding with <b>evidence</b>, scores the opportunity, and tells your rep exactly what to do next. Tap a sample business to watch the flow.</p>
-    </div>
-    <div class="head-right">
-      <button class="theme-btn" id="themeBtn" aria-label="Toggle theme"><svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M6 6 4.5 4.5M19.5 19.5 18 18M18 6l1.5-1.5M4.5 19.5 6 18"/></svg><span id="themeLbl">Theme</span></button>
-      <span class="demo-tag">Interactive prototype · mock data</span>
-    </div>
-  </div>
-
-  <div class="layout">
-    <div class="stage">
-      <div class="wl">
-        <div class="wl-lab">White-label preview</div>
-        <div class="wl-seg" id="wlSeg">
-          <button data-brand="xpi" class="on"><span class="sw" style="background:#F2A93B"></span>XPI</button>
-          <button data-brand="momentum"><span class="sw" style="background:#3B82F6"></span>Momentum BD</button>
-        </div>
-      </div>
-      <div class="phone">
-        <div class="screen">
-          <div class="statusbar">
-            <span>9:41</span>
-            <span class="dots"><i></i><i></i><i></i></span>
-            <span>BD·OS</span>
-          </div>
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="app">
           <div class="appbar" id="appbar">
             <div class="back" id="backBtn" role="button" tabindex="0" aria-label="Back">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>
             </div>
-            <div>
+            <div class="brandwrap">
               <div class="mark">BD<span>·</span>Intel</div>
               <div class="sub" id="appSub">Prospect Capture</div>
             </div>
             <div class="grow"></div>
             <div class="badge" id="appBadge">Home</div>
+            <button class="theme-btn" id="themeBtn" aria-label="Toggle theme"><svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M6 6 4.5 4.5M19.5 19.5 18 18M18 6l1.5-1.5M4.5 19.5 6 18"/></svg><span id="themeLbl" class="tlbl">Theme</span></button>
           </div>
           <div class="view" id="view"><!-- screens injected --></div>
-        </div>
-      </div>
-      <div class="wl-note">Same engine, same research — <b>swap the brand color and the product catalog in seconds</b>. That’s how a BD agency runs it under their own name, for their own clients.</div>
-    </div>
-
-    <aside class="side">
-      <div class="rail">
-        <h3>Evidence before opinion</h3>
-        <div class="rl-sub">The one rule that separates this from “ask an AI about a business.” Every finding is tagged and sourced.</div>
-        <div class="legend">
-          <div class="lg"><span class="sw" style="background:var(--verified)"></span><div><b style="color:var(--verified)">Verified</b><span>Directly observed in a source — with URL, excerpt, timestamp.</span></div></div>
-          <div class="lg"><span class="sw" style="background:var(--infer)"></span><div><b style="color:var(--infer)">Inference</b><span>Strongly implied by evidence, but not stated outright.</span></div></div>
-          <div class="lg"><span class="sw" style="background:var(--hypo)"></span><div><b style="color:var(--hypo)">Hypothesis</b><span>A lead worth checking — never presented as fact.</span></div></div>
-        </div>
-      </div>
-
-      <div class="rail">
-        <h3>What the engine runs</h3>
-        <div class="rl-sub">Deterministic backend, AI on top — never the reverse.</div>
-        <div class="principle"><div class="pn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7 7 .5-5.5 4.5L18 21l-6-4-6 4 1.5-7L2 9.5 9 9z"/></svg></div><div><div class="pt">Multi-relationship scoring</div><div class="pd">A business isn’t just a lead — it may be a referral, partner, or vendor. All scored separately.</div></div></div>
-        <div class="principle"><div class="pn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 12l2 2 4-4"/></svg></div><div><div class="pt">Product match from catalog</div><div class="pd">The AI recommends — it never invents pricing. Every price comes from the XPI catalog.</div></div></div>
-        <div class="principle"><div class="pn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div><div class="pt">Guardrails, not autonomy</div><div class="pd">Agents research and draft. Sending, buying, and deleting stay behind human approval.</div></div></div>
-        <div class="disclaimer">Businesses, findings, scores and prices shown here are illustrative sample data for demonstration only — not real research output or quoted pricing.</div>
-      </div>
-    </aside>
-  </div>
-
-  <div class="foot">CAPTURE → IDENTIFY → RESEARCH → VERIFY → SCORE → CLASSIFY → RECOMMEND → ENGAGE → CLOSE</div>
 </div>
 
 <script>
@@ -669,27 +640,36 @@ function renderHome(){
   current=null;
   setChrome('Prospect Capture','Home',false);
   view.innerHTML = `
+  <div class="hero">
+    <div class="hero-eyebrow">${I.avo} Agentic BD Intelligence</div>
+    <h1 class="hero-h">See the opportunity <em>before</em> you make the pitch.</h1>
+    <p class="hero-sub">Point it at any business. Autonomous agents research it, back every finding with <b>evidence</b>, score the opportunity, and hand your rep the play — in about 30 seconds.</p>
+    <div class="pipe">
+      <div class="pipe-step"><span class="pd"></span>Capture</div><span class="pipe-arm"></span>
+      <div class="pipe-step"><span class="pd"></span>Research</div><span class="pipe-arm"></span>
+      <div class="pipe-step"><span class="pd"></span>Evidence</div><span class="pipe-arm"></span>
+      <div class="pipe-step"><span class="pd"></span>Score</div><span class="pipe-arm"></span>
+      <div class="pipe-step"><span class="pd"></span>Play</div>
+    </div>
+  </div>
   <div class="pad">
-    <div class="hi">Capture a business<small>Any input becomes an evidence-backed prospect.</small></div>
-    <div class="section-h">Capture method</div>
+    <div class="scanbar">
+      <input id="urlIn" placeholder="Enter a website or business name…" autocomplete="off" spellcheck="false">
+      <button class="btn" id="urlGo">${I.scan} Scan</button>
+    </div>
     <div class="cap-grid">
-      ${capBtn('card','Business card','OCR')}
-      ${capBtn('store','Storefront','Vision')}
-      ${capBtn('qr','QR code','Safe-parse')}
-      ${capBtn('web','Website','Live')}
-      ${capBtn('name','Business name','Search')}
-      ${capBtn('voice','Voice','Dictate')}
+      ${capBtn('card','Business card')}
+      ${capBtn('web','Website')}
+      ${capBtn('name','Name')}
+      ${capBtn('qr','QR code')}
+      ${capBtn('store','Storefront')}
+      ${capBtn('voice','Voice')}
     </div>
-    <div class="section-h">Enter a website</div>
-    <div class="urlbar">
-      <input id="urlIn" placeholder="legacycuts.com" autocomplete="off" spellcheck="false">
-      <button class="btn" id="urlGo">Analyze</button>
-    </div>
-    <div class="section-h">Try a sample business</div>
+    <div class="section-h">See it work — live example</div>
     ${sampleRow('legacy')}
     ${sampleRow('bright')}
     ${sampleRow('gulf')}
-    <div class="section-h">Samples run instantly (offline). Website / card / name run <b style="color:var(--accent);font-weight:600">live AI research</b>.</div>
+    <div class="home-note">Examples are instant, offline samples. A website, card, or name runs <b style="color:var(--accent)">live AI research</b>.</div>
     <input id="cardFile" type="file" accept="image/*" style="display:none">
   </div>`;
 
@@ -706,7 +686,7 @@ function renderHome(){
   go.onclick=runUrl; inp.onkeydown=e=>{ if(e.key==='Enter') runUrl(); };
   const cf=document.getElementById('cardFile'); if(cf) cf.onchange=e=>{ const f=e.target.files&&e.target.files[0]; if(f) startCard(f); e.target.value=''; };
 }
-function capBtn(k,lb,mini){ return `<div class="cap" data-cap="${k}"><div class="ic">${I[k]}</div><div class="lb">${lb}</div><div class="mini">${mini}</div></div>`; }
+function capBtn(k,lb){ return `<div class="cap" data-cap="${k}"><div class="ic">${I[k]}</div><div class="lb">${lb}</div></div>`; }
 function sampleRow(id){ const b=DB[id]; return `<div class="sample" data-sample="${id}"><div class="logo" style="background:${b.color}">${b.initials}</div><div class="info"><div class="nm">${b.name}</div><div class="mt">${b.loc}</div></div><div class="go">${I.arrow}</div></div>`; }
 function flash(el){ el.style.borderColor='var(--accent)'; setTimeout(()=>el.style.borderColor='',400); }
 
@@ -1015,6 +995,26 @@ function applyServerBranding(cfg){
 fetch('/api/config').then(r=>r.json()).then(cfg=>{ SERVER_CFG={...SERVER_CFG,...cfg}; applyServerBranding(SERVER_CFG); })
   .catch(()=>{})
   .finally(()=>{ applyBrand('xpi'); });
+
+/* ---------- ambient agentic backdrop (neural constellation) ---------- */
+(function(){
+  const c=document.getElementById('fx'); if(!c) return;
+  if(reduce) return;
+  const ctx=c.getContext('2d'); let w,h,pts,dpr;
+  function accent(){ return (getComputedStyle(root).getPropertyValue('--accent').trim())||'#F2A93B'; }
+  function size(){ dpr=Math.min(2,window.devicePixelRatio||1); w=c.width=Math.floor(innerWidth*dpr); h=c.height=Math.floor(innerHeight*dpr); }
+  function init(){ size(); const n=Math.max(26,Math.min(64,Math.floor(innerWidth/18))); pts=[]; for(let i=0;i<n;i++) pts.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.12*dpr,vy:(Math.random()-.5)*.12*dpr}); }
+  function frame(){ const a=accent(); ctx.clearRect(0,0,w,h);
+    for(const p of pts){ p.x+=p.vx;p.y+=p.vy; if(p.x<0||p.x>w)p.vx*=-1; if(p.y<0||p.y>h)p.vy*=-1; }
+    const md=150*dpr;
+    for(let i=0;i<pts.length;i++){ for(let j=i+1;j<pts.length;j++){ const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.hypot(dx,dy); if(d<md){ ctx.strokeStyle=a; ctx.globalAlpha=(1-d/md)*.13; ctx.lineWidth=dpr; ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke(); } } }
+    ctx.globalAlpha=.55; ctx.fillStyle=a;
+    for(const p of pts){ ctx.beginPath(); ctx.arc(p.x,p.y,1.4*dpr,0,6.283); ctx.fill(); }
+    ctx.globalAlpha=1; requestAnimationFrame(frame);
+  }
+  init(); requestAnimationFrame(frame);
+  let t; addEventListener('resize',()=>{ clearTimeout(t); t=setTimeout(init,180); });
+})();
 </script>
 </body>
 </html>
