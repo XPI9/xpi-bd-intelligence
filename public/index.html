@@ -410,6 +410,7 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
 @keyframes bdtrace{to{stroke-dashoffset:-84}}
 .intro-word{font-family:"Archivo";font-weight:800;font-size:clamp(24px,7.5vw,38px);letter-spacing:-.02em;color:#EDF1F7;opacity:0;transform:translateY(14px);animation:iRise .7s .35s ease forwards}
 .intro-word span{color:var(--accent)}
+.intro-fullname{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#9aa7bb;margin-top:12px;opacity:0;animation:iFade .8s 1.05s ease forwards}
 .intro-pipe{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-top:18px}
 .intro-pipe i{font-family:"IBM Plex Mono",monospace;font-style:normal;font-size:9.5px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#D5DEEA;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.22);border-radius:20px;padding:5px 11px;opacity:0;transform:translateY(8px)}
 .intro-pipe i:nth-child(1){animation:iChip .55s .85s ease forwards}
@@ -504,6 +505,7 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
   <div class="intro-inner">
     <div class="intro-mark"><svg class="bdmark" viewBox="0 0 240 140" xmlns="http://www.w3.org/2000/svg" aria-label="BD"><text class="bdfill" x="120" y="108" text-anchor="middle">BD</text><text class="bdtrace" x="120" y="108" text-anchor="middle">BD</text></svg></div>
     <div class="intro-word">BD<span>·</span>INTELLIGENCE</div>
+    <div class="intro-fullname">Business Development Intelligence</div>
     <div class="intro-pipe"><i>Capture</i><i>Research</i><i>Evidence</i><i>Score</i><i>Play</i></div>
     <div class="intro-tag">See the opportunity before you make the pitch.</div>
   </div>
@@ -526,6 +528,7 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.47.10/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script>
 /* ---------------- icons ---------------- */
 const I = {
@@ -741,6 +744,8 @@ const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 function setChrome(sub,badge,back){ appSub.textContent=sub; appBadge.textContent=badge; appbar.classList.toggle('can-back',back); }
 backBtn.onclick = renderHome;
 backBtn.onkeydown = e=>{ if(e.key==='Enter'||e.key===' ') renderHome(); };
+appBadge.style.cursor='pointer'; appBadge.title='Go to home';
+appBadge.onclick=()=>{ if(PROFILE) renderHome(); };
 
 /* ---------- pipeline circuit ---------- */
 const CIRCUIT_STAGES=['Capture','Research','Evidence','Score','Play'];
@@ -759,7 +764,7 @@ function startVoice(){
   const inp=document.getElementById('urlIn');
   if(!SR){ if(inp){ inp.focus(); inp.placeholder='Voice needs a supported browser — type the business name'; } return; }
   const r=new SR(); r.lang='en-US'; r.interimResults=false; r.maxAlternatives=1;
-  if(inp){ inp.placeholder='🎙 Listening… say the business name'; }
+  if(inp){ inp.placeholder='🎙 Listening… say or describe the business'; }
   r.onresult=e=>{ const t=(e.results[0][0].transcript||'').trim(); if(!t){ return; } if(inp) inp.value=t; startLive({name:t,url:''}); };
   r.onerror=ev=>{ if(inp) inp.placeholder=(ev.error==='not-allowed')?'Microphone blocked — allow it, or type the name':'Didn’t catch that — tap Voice again or type it'; };
   r.onend=()=>{ if(inp && inp.placeholder.indexOf('Listening')>-1) inp.placeholder='Enter a website or business name…'; };
@@ -794,6 +799,9 @@ function renderAuth(mode){ mode=mode||'signin'; appbar.classList.remove('can-bac
     }catch(e){ err.textContent=(e&&e.message)||'Could not continue.'; byId('auGo').disabled=false; byId('auGo').textContent=(mode==='signin'?'Sign in':'Create account'); } };
   byId('auGo').onclick=go; byId('auPass').onkeydown=e=>{ if(e.key==='Enter') go(); }; }
 async function saveProspect(intel){ if(!sb||!PROFILE) return; try{ await sb.from('prospects').insert({account_id:PROFILE.id,name:intel.name,loc:intel.loc,score:intel.score,intel}); }catch(_){}}
+async function authHeaders(){ try{ const t=((await sb.auth.getSession()).data.session||{}).access_token; return t?{'Authorization':'Bearer '+t}:{}; }catch(_){ return {}; } }
+function decodeQR(file){ return new Promise((res)=>{ const img=new Image(); const u=URL.createObjectURL(file); img.onload=()=>{ try{ const cv=document.createElement('canvas'); cv.width=img.width; cv.height=img.height; const cx=cv.getContext('2d'); cx.drawImage(img,0,0); const d=cx.getImageData(0,0,cv.width,cv.height); URL.revokeObjectURL(u); const code=window.jsQR?window.jsQR(d.data,d.width,d.height):null; res(code?code.data:null); }catch(_){ res(null); } }; img.onerror=()=>{ URL.revokeObjectURL(u); res(null); }; img.src=u; }); }
+async function startQR(file){ const text=await decodeQR(file); if(!text){ const inp=document.getElementById('urlIn'); if(inp){ inp.focus(); inp.placeholder='Couldn’t read that QR — paste the link or type a name'; } return; } const looksUrl=/^https?:\/\//i.test(text)||(/\./.test(text)&&!/\s/.test(text)); startLive(looksUrl?{name:'',url:text}:{name:text,url:''}); }
 function setAccent(c){ const r=document.documentElement.style; if(c){ r.setProperty('--accent',c); r.setProperty('--accent-soft','color-mix(in srgb, '+c+' 16%, transparent)'); } }
 function applyProfile(p){
   PROFILE=p||null; ACTIVE_CATALOG=(p&&p.catalog&&p.catalog.length)?p.catalog:null;
@@ -846,7 +854,7 @@ function renderHome(){
   setChrome('Prospect Capture','Home',false);
   view.innerHTML = `
   <div class="hero">
-    <div class="hero-eyebrow">${I.avo} Agentic BD Intelligence</div>
+    <div class="hero-eyebrow">${I.avo} Agentic Business-Development Intelligence</div>
     <h1 class="hero-h">See the opportunity <em>before</em> you make the pitch.</h1>
     <p class="hero-sub">Point it at any business. Autonomous agents research it, back every finding with <b>evidence</b>, score the opportunity, and hand your rep the play — in about 30 seconds.</p>
     ${circuitHTML('ambient')}
@@ -866,8 +874,9 @@ function renderHome(){
       ${capBtn('voice','Voice')}
     </div>
     <div class="section-h">Your pipeline</div><button class="prosp-btn" id="provBtn">${I.grid} View saved prospects</button>
-    <div class="home-note">Point it at any business — a website, a name, a card photo, or your voice. Live research in ~30 seconds.</div>
+    <div class="home-note">Point it at any business — a website, a name, a card, a storefront, a QR, or your voice. Live research in ~30 seconds.</div>
     <input id="cardFile" type="file" accept="image/*" style="display:none">
+    <input id="qrFile" type="file" accept="image/*" capture="environment" style="display:none">
   </div>`;
 
   view.querySelectorAll('[data-cap]').forEach(el=>{
@@ -875,7 +884,7 @@ function renderHome(){
       if(k==='web'||k==='name'){ document.getElementById('urlIn').focus(); }
       else if(k==='card'||k==='store'){ document.getElementById('cardFile').click(); }
       else if(k==='voice'){ startVoice(); }
-      else { const inp=document.getElementById('urlIn'); if(inp){ inp.focus(); inp.placeholder='Point a camera app at the QR, then paste the link here'; } }
+      else if(k==='qr'){ document.getElementById('qrFile').click(); }
     };
   });
   view.querySelectorAll('[data-sample]').forEach(el=> el.onclick=()=> startSample(el.dataset.sample));
@@ -883,6 +892,7 @@ function renderHome(){
   const runUrl=()=>{ const v=(inp.value||'').trim(); if(!v) return; const looksUrl=/\./.test(v)&&!/\s/.test(v); startLive({ name: looksUrl?'':v, url: looksUrl?v:'' }); };
   go.onclick=runUrl; inp.onkeydown=e=>{ if(e.key==='Enter') runUrl(); };
   const cf=document.getElementById('cardFile'); if(cf) cf.onchange=e=>{ const f=e.target.files&&e.target.files[0]; if(f) startCard(f); e.target.value=''; };
+  const qf=document.getElementById('qrFile'); if(qf) qf.onchange=e=>{ const f=e.target.files&&e.target.files[0]; if(f) startQR(f); e.target.value=''; };
   const ab=byId('acctBtn'); if(ab) ab.onclick=renderAccount;
   const pb=byId('provBtn'); if(pb) pb.onclick=renderProspects;
 }
@@ -901,22 +911,23 @@ function startSample(id){ const b=DB[id]; showResearch({ name:b.name, sub:b.loc,
 
 function startLive({name,url}){
   const disp=name||url;
-  const p=fetch('/api/research',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,url,catalog:ACTIVE_CATALOG})})
-    .then(r=>r.json()).then(d=>{ if(d.error) throw new Error(d.message||d.error); return d; });
+  const p=authHeaders().then(h=>fetch('/api/research',{method:'POST',headers:{'Content-Type':'application/json',...h},body:JSON.stringify({name,url,catalog:ACTIVE_CATALOG})})
+    .then(r=>r.json()).then(d=>{ if(d.error) throw new Error(d.message||d.error); return d; }));
   showResearch({ name:disp, sub:'Live AI research', id:'_live', dataPromise:p });
 }
 
 async function startCard(file){
   let b64; try{ b64=await fileToBase64(file); }catch(e){ return showError('Could not read that image.'); }
   const mediaType=file.type||'image/jpeg';
-  const p=fetch('/api/extract',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imageBase64:b64,mediaType})})
+  const h=await authHeaders();
+  const p=fetch('/api/extract',{method:'POST',headers:{'Content-Type':'application/json',...h},body:JSON.stringify({imageBase64:b64,mediaType})})
     .then(r=>r.json()).then(fields=>{ if(fields.error) throw new Error(fields.message||fields.error);
       const nm=fields.company||fields.name||''; const url=fields.website||'';
-      if(!nm && !url) throw new Error('No business name or website could be read from that card.');
-      return fetch('/api/research',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:nm,url,catalog:ACTIVE_CATALOG})})
+      if(!nm && !url) throw new Error('Couldn’t read a business from that photo — try a clearer shot, or type the name.');
+      return fetch('/api/research',{method:'POST',headers:{'Content-Type':'application/json',...h},body:JSON.stringify({name:nm,url,catalog:ACTIVE_CATALOG})})
         .then(r=>r.json()).then(d=>{ if(d.error) throw new Error(d.message||d.error); return d; });
     });
-  showResearch({ name:'Business card', sub:'Reading card…', id:'_live', dataPromise:p });
+  showResearch({ name:'Reading photo', sub:'Identifying the business…', id:'_live', dataPromise:p });
 }
 function fileToBase64(file){ return new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(String(fr.result).split(',')[1]); fr.onerror=rej; fr.readAsDataURL(file); }); }
 
@@ -1024,7 +1035,7 @@ async function runAVO(id){
   const orig=btn.innerHTML; btn.disabled=true; btn.innerHTML=I.loader+' Generating variations…';
   out.innerHTML='';
   try{
-    const r=await fetch('/api/variations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({intel:DB[id]})});
+    const r=await fetch('/api/variations',{method:'POST',headers:{'Content-Type':'application/json',...(await authHeaders())},body:JSON.stringify({intel:DB[id]})});
     const d=await r.json(); if(d.error) throw new Error(d.message||d.error);
     DB[id]._avo=d; out.innerHTML=avoHTML(d); wireAvo(); btn.style.display='none';
   }catch(e){

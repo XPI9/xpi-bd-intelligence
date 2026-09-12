@@ -20,6 +20,34 @@ app.use(express.json({ limit: '12mb' })); // card images arrive as base64
 
 const KEY_OK = !!process.env.ANTHROPIC_API_KEY && !process.env.ANTHROPIC_API_KEY.includes('REPLACE_ME');
 
+// --- auth gate: only signed-in users can spend AI, and cap how much ---
+const SB_URL = 'https://ladcpxqwvfiosffrvwdq.supabase.co';
+const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhZGNweHF3dmZpb3NmZnJ2d2RxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxODI3OTQsImV4cCI6MjEwNDc1ODc5NH0.0Se1F_572VXg5Z3QzDVxGdjhehci5ljM8-FFRyiR8dQ';
+async function getUser(req) {
+  const a = req.headers.authorization || '';
+  const token = a.startsWith('Bearer ') ? a.slice(7) : '';
+  if (!token) return null;
+  try {
+    const r = await fetch(SB_URL + '/auth/v1/user', { headers: { apikey: SB_ANON, authorization: 'Bearer ' + token } });
+    if (!r.ok) return null;
+    const u = await r.json();
+    return u && u.id ? u : null;
+  } catch (_) { return null; }
+}
+const _scans = new Map(); // uid -> [timestamps]
+function underLimit(uid, max) {
+  const now = Date.now(), WIN = 3600000;
+  const arr = (_scans.get(uid) || []).filter((t) => now - t < WIN);
+  if (arr.length >= max) return false;
+  arr.push(now); _scans.set(uid, arr); return true;
+}
+async function gate(req, res, cost) {
+  const u = await getUser(req);
+  if (!u) { res.status(401).json({ error: 'auth', message: 'Please sign in to run this.' }); return null; }
+  if (!underLimit(u.id, cost || 60)) { res.status(429).json({ error: 'rate', message: 'You’ve hit the hourly limit — give it a few minutes and try again.' }); return null; }
+  return u;
+}
+
 // --- brand profile (drives the front-end look; catalog is chosen in lib/catalog.js) ---
 const PROFILE = (process.env.BD_PROFILE || 'xpi').toLowerCase();
 const CONFIG = {
@@ -82,6 +110,7 @@ app.get('/api/catalog', (_req, res) => res.json(CATALOG));
 
 app.post('/api/research', async (req, res) => {
   if (!KEY_OK) return res.status(400).json({ error: 'no_api_key', message: 'Add your ANTHROPIC_API_KEY to .env and restart.' });
+  if (!(await gate(req, res, 60))) return;
   const { name, url, catalog } = req.body || {};
   if (!name && !url) return res.status(400).json({ error: 'bad_input', message: 'Provide a business name or website.' });
   try {
@@ -95,6 +124,7 @@ app.post('/api/research', async (req, res) => {
 
 app.post('/api/variations', async (req, res) => {
   if (!KEY_OK) return res.status(400).json({ error: 'no_api_key', message: 'Add your ANTHROPIC_API_KEY to .env and restart.' });
+  if (!(await gate(req, res, 80))) return;
   const { intel } = req.body || {};
   if (!intel || !intel.name) return res.status(400).json({ error: 'bad_input', message: 'Missing prospect context. Run a scan first.' });
   try {
@@ -108,6 +138,7 @@ app.post('/api/variations', async (req, res) => {
 
 app.post('/api/extract', async (req, res) => {
   if (!KEY_OK) return res.status(400).json({ error: 'no_api_key', message: 'Add your ANTHROPIC_API_KEY to .env and restart.' });
+  if (!(await gate(req, res, 80))) return;
   const { imageBase64, mediaType } = req.body || {};
   if (!imageBase64) return res.status(400).json({ error: 'bad_input', message: 'No image provided.' });
   try {
