@@ -377,6 +377,10 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
 
 /* ---------- Closer ---------- */
 .cl-intro{font-size:12.5px;color:var(--muted);line-height:1.5;margin:2px 2px 12px}
+.cl-fmt{display:flex;gap:4px;background:var(--surface-2);border:1px solid var(--line-soft);border-radius:11px;padding:4px;margin:0 0 10px}
+.cl-fmt-b{flex:1;appearance:none;border:none;background:none;color:var(--muted);border-radius:8px;padding:8px 4px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.cl-fmt-b.on{background:var(--surface);color:var(--text);box-shadow:0 1px 2px rgba(15,25,40,.08)}
+.cl-fmt-b:hover:not(.on){color:var(--text)}
 .cl-lead{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--text);margin-bottom:6px}
 .cl-lead svg{width:16px;height:16px;color:var(--accent)}
 .cl-doc{border:1px solid var(--line);border-radius:16px;background:var(--surface);padding:16px 15px;box-shadow:var(--shadow)}
@@ -1124,13 +1128,15 @@ function wireAvo(){
 /* ---------- Instant Closer ---------- */
 function closerHTML(b){
   const d=b._closer;
-  const head=`<div class="cl-intro"><div class="cl-lead">${I.doc} Instant Closer</div>Turn this prospect into a ready-to-hand deliverable. The platform picks the right format for what you sell — a website <b>wireframe</b>, an itemized <b>quote</b>, or a one-page <b>proposal</b> — and prices come straight from your catalog.</div>`;
+  const fmt=b._closerFmt||'auto';
+  const head=`<div class="cl-intro"><div class="cl-lead">${I.doc} Instant Closer</div>Turn this prospect into a ready-to-hand deliverable. Leave it on <b>Auto</b> and the platform picks the right format — a website <b>wireframe</b>, an itemized <b>quote</b>, or a one-page <b>proposal</b> — or force one yourself. Prices come straight from your catalog.</div>`;
+  const picker=`<div class="cl-fmt" id="clFmt">${[['auto','Auto'],['wireframe','Wireframe'],['quote','Quote'],['proposal','Proposal']].map(([k,l])=>`<button class="cl-fmt-b${fmt===k?' on':''}" data-fmt="${k}">${l}</button>`).join('')}</div>`;
   if(!d){
-    return head+`<button class="btn block" id="closerBtn">${I.bolt} Generate closer</button>
-      <div class="avo-sub">One click — the AI builds the deliverable from the evidence and your matched product.</div>
+    return head+picker+`<button class="btn block" id="closerBtn">${I.bolt} Generate closer</button>
+      <div class="avo-sub">Auto lets the AI choose — or tap Wireframe to show UI/UX direction, Quote for an estimate, Proposal for a one-pager.</div>
       <div id="closerOut"></div>`;
   }
-  return `<div id="closerOut">${closerDoc(d)}</div>
+  return head+picker+`<div id="closerOut">${closerDoc(d)}</div>
     <button class="btn ghost block" id="closerBtn" style="margin-top:12px">${I.avo} Regenerate</button>`;
 }
 function closerDoc(d){
@@ -1174,6 +1180,10 @@ function closerText(d){
   return t.trim();
 }
 function wireCloser(id){
+  document.querySelectorAll('#clFmt [data-fmt]').forEach(bn=>bn.onclick=()=>{
+    DB[id]._closerFmt=bn.dataset.fmt;
+    document.querySelectorAll('#clFmt [data-fmt]').forEach(x=>x.classList.toggle('on',x===bn));
+  });
   const c=document.querySelector('#closerOut [data-copy]');
   if(c) c.onclick=()=>{ const d=DB[id]&&DB[id]._closer; if(!d) return;
     navigator.clipboard.writeText(closerText(d)).then(()=>{ c.innerHTML=I.check+' Copied'; setTimeout(()=>{ c.innerHTML=I.doc+' Copy deliverable'; },1600); }).catch(()=>{}); };
@@ -1184,8 +1194,9 @@ async function runCloser(id){
   const orig=btn.innerHTML, hadDoc=!!(DB[id]&&DB[id]._closer);
   btn.disabled=true; btn.innerHTML=I.loader+' Building your closer…';
   const out=document.getElementById('closerOut'); if(out && !hadDoc) out.innerHTML='';
+  const fmt=DB[id]._closerFmt||'auto';
   try{
-    const r=await fetch('/api/closer',{method:'POST',headers:{'Content-Type':'application/json',...(await authHeaders())},body:JSON.stringify({intel:DB[id],catalog:ACTIVE_CATALOG})});
+    const r=await fetch('/api/closer',{method:'POST',headers:{'Content-Type':'application/json',...(await authHeaders())},body:JSON.stringify({intel:DB[id],catalog:ACTIVE_CATALOG,format:fmt==='auto'?undefined:fmt})});
     const d=await r.json(); if(d.error) throw new Error(d.message||d.error);
     DB[id]._closer=d; paint(id,'closer');
   }catch(e){

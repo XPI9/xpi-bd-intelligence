@@ -139,11 +139,11 @@ app.post('/api/variations', async (req, res) => {
 app.post('/api/closer', async (req, res) => {
   if (!KEY_OK) return res.status(400).json({ error: 'no_api_key', message: 'Add your ANTHROPIC_API_KEY to .env and restart.' });
   if (!(await gate(req, res, 80))) return;
-  const { intel, catalog } = req.body || {};
+  const { intel, catalog, format } = req.body || {};
   if (!intel || !intel.name) return res.status(400).json({ error: 'bad_input', message: 'Missing prospect context. Run a scan first.' });
   try {
     const cat = Array.isArray(catalog) && catalog.length ? catalog.slice(0, 40) : CATALOG;
-    const closer = await generateCloser(intel, cat);
+    const closer = await generateCloser(intel, cat, { forceKind: format });
     res.json(closer);
   } catch (e) {
     console.error('[closer]', e);
