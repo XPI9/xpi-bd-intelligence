@@ -444,6 +444,21 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
 .hero-h em{font-style:normal;color:var(--accent)}
 .hero-sub{color:var(--muted);font-size:13.5px;line-height:1.5;margin:0 0 16px;max-width:44ch}
 .hero-sub b{color:var(--text);font-weight:600}
+.arch{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;justify-content:center;margin:4px 0 12px}
+.arch-stage{flex:1;min-width:90px;background:var(--surface-2);border:1px solid var(--line-soft);border-radius:12px;padding:10px 8px;text-align:center;position:relative;overflow:hidden}
+.arch-stage::after{content:"";position:absolute;left:-30%;top:0;height:100%;width:30%;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--accent) 22%,transparent),transparent);animation:archSweep 6s linear infinite;animation-delay:calc(var(--i) * .5s)}
+@keyframes archSweep{0%{left:-30%}20%,100%{left:130%}}
+.arch-stage.play{border-color:color-mix(in srgb,var(--accent) 45%,transparent);background:var(--accent-soft)}
+.arch-k{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;color:var(--accent);margin-bottom:4px;position:relative;z-index:1}
+.arch-d{font-size:10.5px;color:var(--muted);line-height:1.3;position:relative;z-index:1}
+.arch-score{font-family:"Archivo";font-weight:800;color:var(--verified);font-size:14px}
+.arch-arrow{display:flex;align-items:center;color:var(--faint);font-size:15px;flex:none;font-weight:700}
+@media(max-width:560px){.arch-arrow{display:none}.arch-stage{min-width:calc(33.33% - 6px)}}
+.arch-play{display:flex;flex-wrap:wrap;align-items:center;gap:6px;justify-content:center;margin:0 0 10px}
+.arch-lab{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.pchip{font-size:10.5px;color:var(--text);background:var(--surface-2);border:1px solid var(--line-soft);border-radius:20px;padding:4px 9px}
+.arch-os{text-align:center;font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin:0 0 16px}
+@media(prefers-reduced-motion:reduce){.arch-stage::after{display:none}}
 /* animated agentic pipeline */
 .pipe{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:2px 0 4px}
 .pipe-step{display:flex;align-items:center;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);padding:4px 0;animation:pipefire 5s ease-in-out infinite}
@@ -830,6 +845,21 @@ function circuitHTML(cls){
   });
   return h+'</div>';
 }
+function archHTML(){
+  return `<div class="arch" aria-label="Capture, Research, Evidence, Score, Play">
+    <div class="arch-stage" style="--i:0"><div class="arch-k">Capture</div><div class="arch-d">Company, site, card, or voice</div></div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-stage" style="--i:1"><div class="arch-k">Research</div><div class="arch-d">Studies the business</div></div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-stage" style="--i:2"><div class="arch-k">Evidence</div><div class="arch-d">Every finding sourced</div></div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-stage" style="--i:3"><div class="arch-k">Score</div><div class="arch-d"><span class="arch-score">87</span> / 100 fit</div></div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-stage play" style="--i:4"><div class="arch-k">Play</div><div class="arch-d">The action layer</div></div>
+  </div>
+  <div class="arch-play"><span class="arch-lab">Play delivers</span><span class="pchip">Recommended offer</span><span class="pchip">Talking points</span><span class="pchip">Opening message</span><span class="pchip">Objection strategy</span><span class="pchip">Next action</span></div>
+  <div class="arch-os">The Business-Development Operating System</div>`;
+}
 
 /* ---------- voice capture ---------- */
 function startVoice(){
@@ -961,10 +991,10 @@ function renderHome(){
   setChrome('Prospect Capture','Home',false);
   view.innerHTML = `
   <div class="hero">
-    <div class="hero-eyebrow">${I.avo} Business-Development Intelligence</div>
+    <div class="hero-eyebrow">${I.avo} XPI BD Intelligence™</div>
     <h1 class="hero-h">See the opportunity <em>before</em> you make the pitch.</h1>
-    <p class="hero-sub">Point it at any business. It researches them, backs every finding with <b>evidence</b>, scores the opportunity, and hands your rep the play — in about 30 seconds.</p>
-    ${circuitHTML('ambient')}
+    <p class="hero-sub">Turn any prospect into an <b>intelligence-backed</b> sales opportunity — enter a company and get the full brief in about 30 seconds.</p>
+    ${archHTML()}
   </div>
   <div class="pad">
     ${acctRow()}
