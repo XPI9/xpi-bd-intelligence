@@ -4,7 +4,7 @@
    - Static assets (icons/fonts): cache-first (fast, offline).
    - /api/*: always network, never cached (results must be live).
 */
-const VERSION = 'bd-v1';
+const VERSION = 'bd-v2';
 const SHELL = 'shell-' + VERSION;
 const ASSETS = 'assets-' + VERSION;
 const SHELL_URL = '/index.html';

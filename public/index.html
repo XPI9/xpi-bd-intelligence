@@ -958,9 +958,9 @@ function renderHome(){
   setChrome('Prospect Capture','Home',false);
   view.innerHTML = `
   <div class="hero">
-    <div class="hero-eyebrow">${I.avo} Agentic Business-Development Intelligence</div>
+    <div class="hero-eyebrow">${I.avo} Business-Development Intelligence</div>
     <h1 class="hero-h">See the opportunity <em>before</em> you make the pitch.</h1>
-    <p class="hero-sub">Point it at any business. Autonomous agents research it, back every finding with <b>evidence</b>, score the opportunity, and hand your rep the play — in about 30 seconds.</p>
+    <p class="hero-sub">Point it at any business. It researches them, backs every finding with <b>evidence</b>, scores the opportunity, and hands your rep the play — in about 30 seconds.</p>
     ${circuitHTML('ambient')}
   </div>
   <div class="pad">
@@ -1000,7 +1000,14 @@ function renderHome(){
   const ab=byId('acctBtn'); if(ab) ab.onclick=renderAccount;
   const pb=byId('provBtn'); if(pb) pb.onclick=renderProspects;
 }
-function capBtn(k,lb){ return `<div class="cap" data-cap="${k}"><div class="ic">${I[k]}</div><div class="lb">${lb}</div></div>`; }
+function capBtn(k,lb){
+  const inner=`<div class="ic">${I[k]}</div><div class="lb">${lb}</div>`;
+  // Camera captures use a real <label for> so a tap opens the camera NATIVELY
+  // (a scripted input.click() is unreliable on mobile browsers like Samsung Internet).
+  if(k==='card'||k==='store') return `<label class="cap" for="cardFile">${inner}</label>`;
+  if(k==='qr') return `<label class="cap" for="qrFile">${inner}</label>`;
+  return `<div class="cap" data-cap="${k}">${inner}</div>`;
+}
 function sampleRow(id){ const b=DB[id]; return `<div class="sample" data-sample="${id}"><div class="logo" style="background:${b.color}">${b.initials}</div><div class="info"><div class="nm">${b.name}</div><div class="mt">${b.loc}</div></div><div class="go">${I.arrow}</div></div>`; }
 function flash(el){ el.style.borderColor='var(--accent)'; setTimeout(()=>el.style.borderColor='',400); }
 
