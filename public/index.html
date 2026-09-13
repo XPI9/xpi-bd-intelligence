@@ -79,12 +79,13 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
   background:
     radial-gradient(1200px 720px at 80% -14%, color-mix(in srgb,var(--accent) 18%,transparent), transparent 55%),
     radial-gradient(1000px 760px at 4% 116%, color-mix(in srgb,var(--infer) 15%,transparent), transparent 55%);}
-.app{position:relative;z-index:2;width:100%;max-width:540px;margin:0 auto;height:100dvh;
+.app{position:relative;z-index:2;width:100%;max-width:100%;margin:0 auto;height:100dvh;
   display:flex;flex-direction:column;overflow:hidden;
   background:color-mix(in srgb,var(--surface) 82%, transparent);
   -webkit-backdrop-filter:blur(22px) saturate(1.15);backdrop-filter:blur(22px) saturate(1.15);
-  border-inline:1px solid var(--line-soft);box-shadow:0 0 100px rgba(0,0,0,.42)}
-@media(min-width:600px){.app{height:min(940px,96dvh);margin-top:max(0px,calc((100dvh - min(940px,96dvh))/2));border-radius:28px;border:1px solid var(--line-soft)}}
+  box-shadow:0 0 100px rgba(0,0,0,.42)}
+/* Phones fill edge-to-edge; only on wider screens does it become a centered, framed card. */
+@media(min-width:600px){.app{max-width:540px;height:min(940px,96dvh);margin-top:max(0px,calc((100dvh - min(940px,96dvh))/2));border-radius:28px;border:1px solid var(--line-soft)}}
 
 /* ---------- page header ---------- */
 .masthead{display:flex; align-items:flex-start; justify-content:space-between; gap:20px; flex-wrap:wrap; margin-bottom:30px}
