@@ -993,7 +993,7 @@ function renderHome(){
   });
   view.querySelectorAll('[data-sample]').forEach(el=> el.onclick=()=> startSample(el.dataset.sample));
   const go=document.getElementById('urlGo'), inp=document.getElementById('urlIn');
-  const runUrl=()=>{ const v=(inp.value||'').trim(); if(!v) return; const looksUrl=/\./.test(v)&&!/\s/.test(v); startLive({ name: looksUrl?'':v, url: looksUrl?v:'' }); };
+  const runUrl=()=>{ const v=(inp.value||'').trim(); if(!v){ const cf=document.getElementById('cardFile'); if(cf) cf.click(); return; } const looksUrl=/\./.test(v)&&!/\s/.test(v); startLive({ name: looksUrl?'':v, url: looksUrl?v:'' }); };
   go.onclick=runUrl; inp.onkeydown=e=>{ if(e.key==='Enter') runUrl(); };
   const cf=document.getElementById('cardFile'); if(cf) cf.onchange=e=>{ const f=e.target.files&&e.target.files[0]; if(f) startCard(f); e.target.value=''; };
   const qf=document.getElementById('qrFile'); if(qf) qf.onchange=e=>{ const f=e.target.files&&e.target.files[0]; if(f) startQR(f); e.target.value=''; };
