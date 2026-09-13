@@ -309,6 +309,8 @@ app.post('/api/extract', async (req, res) => {
   }
 });
 
+app.get('/pricing', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'pricing.html')));
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 const PORT = process.env.PORT || 3000;
