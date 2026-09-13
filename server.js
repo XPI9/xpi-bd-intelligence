@@ -99,10 +99,11 @@ async function meterScan(account, cap, res) {
 // --- Stripe webhook: keep the account's plan/status in sync with Stripe ---
 async function stripeWebhook(req, res) {
   if (!billingConfigured) return res.status(400).send('billing not configured');
+  if (!WEBHOOK_SECRET) { console.error('[webhook] STRIPE_WEBHOOK_SECRET not set — refusing unsigned events'); return res.status(400).send('webhook secret not configured'); }
   let event;
   try {
     const sig = req.headers['stripe-signature'];
-    event = WEBHOOK_SECRET ? stripe().webhooks.constructEvent(req.body, sig, WEBHOOK_SECRET) : JSON.parse(req.body.toString());
+    event = stripe().webhooks.constructEvent(req.body, sig, WEBHOOK_SECRET);
   } catch (e) { console.error('[webhook] signature', e.message); return res.status(400).send('bad signature'); }
   try { await handleStripeEvent(event); } catch (e) { console.error('[webhook] handle', e.message); }
   res.json({ received: true });

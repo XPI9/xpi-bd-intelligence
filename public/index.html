@@ -1102,8 +1102,8 @@ function renderIntel(id){
     <div class="iq-head">
       <div class="iq-top">
         <div>
-          <div class="iq-name">${b.name}</div>
-          <div class="iq-loc">${b.loc}</div>
+          <div class="iq-name">${esc(b.name)}</div>
+          <div class="iq-loc">${esc(b.loc)}</div>
         </div>
         <div class="conf-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="11" height="11"><path d="M20 6L9 17l-5-5"/></svg>ID ${(b.identity*100).toFixed(0)}%</div>
       </div>
@@ -1115,8 +1115,8 @@ function renderIntel(id){
         <div class="rel-block">
           <div class="rel-lab">Relationship classification</div>
           <div class="pills">
-            <span class="pill primary"><span class="dotv"></span>${b.relPrimary}</span>
-            ${b.relSecondary.map(r=>`<span class="pill sec">${r}</span>`).join('')}
+            <span class="pill primary"><span class="dotv"></span>${esc(b.relPrimary)}</span>
+            ${b.relSecondary.map(r=>`<span class="pill sec">${esc(r)}</span>`).join('')}
           </div>
         </div>
       </div>
@@ -1271,41 +1271,41 @@ async function runCloser(id){
 
 function ovHTML(b){
   return `
-  <div class="strat primary"><div class="k">Primary strategy</div><div class="v"><b>${b.strat.primary}</b></div><div class="v" style="color:var(--muted);font-size:12px;margin-top:6px">${b.strat.primaryWhy}</div></div>
-  <div class="strat"><div class="k">Secondary strategy</div><div class="v">${b.strat.secondary}</div></div>
+  <div class="strat primary"><div class="k">Primary strategy</div><div class="v"><b>${esc(b.strat.primary)}</b></div><div class="v" style="color:var(--muted);font-size:12px;margin-top:6px">${esc(b.strat.primaryWhy)}</div></div>
+  <div class="strat"><div class="k">Secondary strategy</div><div class="v">${esc(b.strat.secondary)}</div></div>
   <div class="card">
     <div class="card-h"><span class="ic">${I.grid}</span>Score breakdown</div>
-    ${b.comps.map(c=>`<div class="scorebar"><div class="row"><span class="lb">${c.l}</span><span class="nn">${c.v}</span></div><div class="track ${c.c==='v'?'tv':c.c==='i'?'ti':c.c==='c'?'tc':''}"><i data-w="${c.v}" style="width:0"></i></div></div>`).join('')}
+    ${b.comps.map(c=>`<div class="scorebar"><div class="row"><span class="lb">${esc(c.l)}</span><span class="nn">${esc(c.v)}</span></div><div class="track ${c.c==='v'?'tv':c.c==='i'?'ti':c.c==='c'?'tc':''}"><i data-w="${esc(c.v)}" style="width:0"></i></div></div>`).join('')}
     <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);margin-top:4px">Formula v1.3 · component-weighted · close difficulty inverse-scaled</div>
   </div>
   <div class="card">
     <div class="card-h"><span class="ic">${I.target}</span>Revenue snapshot</div>
-    <div class="rev">${b.revenue.map(r=>`<div class="cell"><div class="n ${r.c}">${r.n}</div><div class="l">${r.l}</div></div>`).join('')}</div>
+    <div class="rev">${b.revenue.map(r=>`<div class="cell"><div class="n ${r.c==='acc'?'acc':r.c==='ver'?'ver':''}">${esc(r.n)}</div><div class="l">${esc(r.l)}</div></div>`).join('')}</div>
   </div>
   <div class="card">
     <div class="card-h"><span class="ic">${I.check}</span>Identity resolution</div>
-    <div style="font-size:12.5px;color:var(--muted);line-height:1.5">Matched at <b style="color:var(--verified)">${(b.identity*100).toFixed(0)}% confidence</b> on: ${b.matched.join(' · ')}. Above threshold — research proceeded automatically.</div>
+    <div style="font-size:12.5px;color:var(--muted);line-height:1.5">Matched at <b style="color:var(--verified)">${(b.identity*100).toFixed(0)}% confidence</b> on: ${esc(b.matched.join(' · '))}. Above threshold — research proceeded automatically.</div>
   </div>`;
 }
 function evHTML(b){
   return `<div style="font-size:12px;color:var(--muted);margin-bottom:12px">Every finding below carries a source, an excerpt, a timestamp and a confidence. Nothing is presented as fact without it.</div>` +
   b.claims.map(c=>`
   <div class="claim">
-    <div class="claim-top"><span class="tier ${c.tier==='verified'?'verified':c.tier==='infer'?'infer':'hypo'}">${c.tier==='verified'?'Verified':c.tier==='infer'?'Inference':'Hypothesis'}</span><span class="claim-conf">${c.conf}%</span></div>
-    <div class="claim-txt">${c.txt}</div>
-    <div class="claim-ex">${c.ex}</div>
-    <div class="claim-src"><span class="chip">${I.link}${c.src}</span><span class="chip">${c.stype}</span><span class="chip">${I.clock}${c.date}</span></div>
+    <div class="claim-top"><span class="tier ${c.tier==='verified'?'verified':c.tier==='infer'?'infer':'hypo'}">${c.tier==='verified'?'Verified':c.tier==='infer'?'Inference':'Hypothesis'}</span><span class="claim-conf">${esc(c.conf)}%</span></div>
+    <div class="claim-txt">${esc(c.txt)}</div>
+    <div class="claim-ex">${esc(c.ex)}</div>
+    <div class="claim-src"><span class="chip">${I.link}${esc(c.src)}</span><span class="chip">${esc(c.stype)}</span><span class="chip">${I.clock}${esc(c.date)}</span></div>
   </div>`).join('');
 }
 function oppHTML(b){
   return b.opps.map(o=>`
   <div class="opp">
-    <div class="opp-h"><span class="rank">${o.rank}</span><span class="ti">${o.ti}</span><span class="pc">${o.pc}</span></div>
+    <div class="opp-h"><span class="rank">${esc(o.rank)}</span><span class="ti">${esc(o.ti)}</span><span class="pc">${esc(o.pc)}</span></div>
     <div class="opp-body">
-      <div class="opp-row"><span class="rk">Finding</span><span class="rv">${o.finding}</span></div>
-      <div class="opp-row"><span class="rk">Impact</span><span class="rv">${o.impact}</span></div>
-      <div class="opp-row"><span class="rk">${catLabel()}</span><span class="rv"><span class="match-tag">${I.bolt}${prodFor(o).n}<span class="pr">${prodFor(o).p}</span></span></span></div>
-      <div class="statusline"><span class="d"></span>${o.status}</div>
+      <div class="opp-row"><span class="rk">Finding</span><span class="rv">${esc(o.finding)}</span></div>
+      <div class="opp-row"><span class="rk">Impact</span><span class="rv">${esc(o.impact)}</span></div>
+      <div class="opp-row"><span class="rk">${catLabel()}</span><span class="rv"><span class="match-tag">${I.bolt}${esc(prodFor(o).n)}<span class="pr">${esc(prodFor(o).p)}</span></span></span></div>
+      <div class="statusline"><span class="d"></span>${esc(o.status)}</div>
     </div>
   </div>`).join('');
 }
@@ -1313,28 +1313,28 @@ function stratHTML(b){
   let html=`
   <div class="nba">
     <div class="tag">${I.bolt} Next best action</div>
-    <div class="act">${b.nba.act}</div>
-    <div class="lead">${b.nba.lead}</div>
-    <div class="ask">${b.nba.ask}</div>
-    <div class="why">${I.info}<span>${b.nba.avoid}</span></div>
+    <div class="act">${esc(b.nba.act)}</div>
+    <div class="lead">${esc(b.nba.lead)}</div>
+    <div class="ask">${esc(b.nba.ask)}</div>
+    <div class="why">${I.info}<span>${esc(b.nba.avoid)}</span></div>
   </div>`;
   if(b.bdplay){
     html+=`<div class="card">
       <div class="card-h"><span class="ic">${I.target}</span>BD / partnership play</div>
-      <div class="play-item"><div class="k">Objective</div><div class="v"><b>${b.bdplay.obj}</b></div></div>
-      <div class="play-item"><div class="k">Why</div><div class="v">${b.bdplay.why}</div></div>
-      <div class="play-item"><div class="k">Opening</div><div class="quote">${b.bdplay.opening}</div></div>
-      <div class="play-item"><div class="k">Next goal</div><div class="v">${b.bdplay.goal}</div></div>
+      <div class="play-item"><div class="k">Objective</div><div class="v"><b>${esc(b.bdplay.obj)}</b></div></div>
+      <div class="play-item"><div class="k">Why</div><div class="v">${esc(b.bdplay.why)}</div></div>
+      <div class="play-item"><div class="k">Opening</div><div class="quote">${esc(b.bdplay.opening)}</div></div>
+      <div class="play-item"><div class="k">Next goal</div><div class="v">${esc(b.bdplay.goal)}</div></div>
     </div>`;
   }
   html+=`<div class="card">
     <div class="card-h"><span class="ic">${I.chat}</span>Sales play</div>
-    <div class="play-item"><div class="k">Opening</div><div class="quote">${b.play.opening}</div></div>
-    <div class="play-item"><div class="k">Discovery questions</div><div class="v"><ul>${b.play.discovery.map(q=>`<li>${q}</li>`).join('')}</ul></div></div>
-    <div class="play-item"><div class="k">Value proposition</div><div class="v">${b.play.value}</div></div>
-    <div class="play-item"><div class="k">Product recommendation</div><div class="v"><span class="match-tag">${I.bolt}${playProd(b)}</span></div></div>
-    <div class="play-item"><div class="k">Objection handling</div><div class="v"><ul>${b.play.objection.map(q=>`<li>${q}</li>`).join('')}</ul></div></div>
-    <div class="play-item"><div class="k">Close</div><div class="quote">${b.play.close}</div></div>
+    <div class="play-item"><div class="k">Opening</div><div class="quote">${esc(b.play.opening)}</div></div>
+    <div class="play-item"><div class="k">Discovery questions</div><div class="v"><ul>${b.play.discovery.map(q=>`<li>${esc(q)}</li>`).join('')}</ul></div></div>
+    <div class="play-item"><div class="k">Value proposition</div><div class="v">${esc(b.play.value)}</div></div>
+    <div class="play-item"><div class="k">Product recommendation</div><div class="v"><span class="match-tag">${I.bolt}${esc(playProd(b))}</span></div></div>
+    <div class="play-item"><div class="k">Objection handling</div><div class="v"><ul>${b.play.objection.map(q=>`<li>${esc(q)}</li>`).join('')}</ul></div></div>
+    <div class="play-item"><div class="k">Close</div><div class="quote">${esc(b.play.close)}</div></div>
   </div>
   <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);text-align:center;padding:4px 0 8px">Draft generated from evidence + vertical playbook + catalog · rep edits before use</div>
   <button class="btn block" id="avoBtn" style="margin-top:2px">${I.avo} Agentic Variation Operators</button>
@@ -1345,10 +1345,10 @@ function stratHTML(b){
 function tlHTML(b){
   return `<div class="card" style="background:transparent;border:none;padding:4px 0">
     <div class="tl">${b.timeline.map(t=>`
-      <div class="tl-item ${t.s}"><span class="dot"></span>
-        <div class="tl-date">${t.date}</div>
-        <div class="tl-ev">${t.ev}</div>
-        <div class="tl-note">${t.note}</div>
+      <div class="tl-item ${t.s==='done'?'done':t.s==='next'?'next':''}"><span class="dot"></span>
+        <div class="tl-date">${esc(t.date)}</div>
+        <div class="tl-ev">${esc(t.ev)}</div>
+        <div class="tl-note">${esc(t.note)}</div>
       </div>`).join('')}</div>
   </div>
   <div style="font-size:11.5px;color:var(--muted);text-align:center;padding:6px 10px">Immutable relationship history — every capture, research run, and interaction is logged and auditable.</div>`;
