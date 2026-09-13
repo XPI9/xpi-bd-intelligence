@@ -36,12 +36,14 @@ async function getUser(req) {
   const a = req.headers.authorization || '';
   const token = a.startsWith('Bearer ') ? a.slice(7) : '';
   if (!token) return null;
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 6000); // never hang on a cold Supabase
   try {
-    const r = await fetch(SB_URL + '/auth/v1/user', { headers: { apikey: SB_ANON, authorization: 'Bearer ' + token } });
+    const r = await fetch(SB_URL + '/auth/v1/user', { headers: { apikey: SB_ANON, authorization: 'Bearer ' + token }, signal: ctrl.signal });
     if (!r.ok) return null;
     const u = await r.json();
     return u && u.id ? u : null;
-  } catch (_) { return null; }
+  } catch (_) { return null; } finally { clearTimeout(timer); }
 }
 const _scans = new Map(); // uid -> [timestamps]
 function underLimit(uid, max) {
@@ -60,9 +62,14 @@ async function gate(req, res, cost) {
 // --- plan context: model + monthly cap for this user's account (server-authoritative) ---
 // If billing isn't wired (no service-role key) or the account has no live plan,
 // everything returns null/undefined and callers fall back to CURRENT behavior.
+// Billing enforcement is OFF until you set BILLING_ENFORCE=on in .env. While off,
+// scans never touch Supabase for a plan lookup (everyone runs free on the env model),
+// and the in-app Plans screen is hidden. Turn it on when you're ready to charge.
+const BILLING_ENFORCE = process.env.BILLING_ENFORCE === 'on';
+
 async function planContext(user) {
   const out = { account: null, planKey: null, model: undefined, cap: null };
-  if (!adminConfigured || !user) return out;
+  if (!BILLING_ENFORCE || !adminConfigured || !user) return out;
   try {
     const acct = await accountByOwner(user.id);
     if (!acct) return out;
@@ -151,7 +158,7 @@ const CONFIG = {
 };
 const BRAND = CONFIG[PROFILE] || CONFIG.xpi;
 
-app.get('/api/config', (_req, res) => res.json(BRAND));
+app.get('/api/config', (_req, res) => res.json({ ...BRAND, showBilling: process.env.BILLING_ENFORCE === 'on' }));
 
 app.get('/api/selftest', async (_req, res) => {
   const out = {};
