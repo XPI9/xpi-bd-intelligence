@@ -216,10 +216,7 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
 @keyframes bulbpop{0%{transform:scale(.8)}55%{transform:scale(1.17)}100%{transform:scale(1)}}
 .bulb-quote{max-width:360px;margin:16px auto 0;min-height:58px;color:var(--faint);font-size:13.5px;line-height:1.55;font-style:italic;text-align:center;opacity:0;transition:opacity .45s}
 .bulb-quote b{font-style:normal;color:color-mix(in srgb,var(--accent) 72%,var(--faint));display:block;margin-top:5px;font-size:11.5px;letter-spacing:.04em}
-.iq-top-r{display:flex;align-items:center;gap:8px}
-.iq-share{display:inline-flex;align-items:center;gap:6px;background:var(--accent-soft);color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);border-radius:9px;padding:7px 11px;font-size:12.5px;font-weight:700;cursor:pointer}
-.iq-share svg{width:14px;height:14px}
-.iq-share:disabled{opacity:.6}
+.cl-share{border-color:color-mix(in srgb,var(--accent) 45%,transparent)!important;color:var(--accent)!important;font-weight:700!important}
 body.shared #avoBtn{display:none!important}
 @keyframes ping{0%{transform:scale(.35);opacity:.7}100%{transform:scale(1);opacity:0}}
 .steps{margin-top:20px;display:flex;flex-direction:column;gap:2px}
@@ -1205,10 +1202,7 @@ function renderIntel(id){
           <div class="iq-name">${esc(b.name)}</div>
           <div class="iq-loc">${esc(b.loc)}</div>
         </div>
-        <div class="iq-top-r">
-          ${window.__SHARED?'':`<button class="iq-share" id="shareBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Share</button>`}
-          <div class="conf-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="11" height="11"><path d="M20 6L9 17l-5-5"/></svg>ID ${(b.identity*100).toFixed(0)}%</div>
-        </div>
+        <div class="conf-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="11" height="11"><path d="M20 6L9 17l-5-5"/></svg>ID ${(b.identity*100).toFixed(0)}%</div>
       </div>
       <div class="ring-wrap">
         <div class="ring">
@@ -1229,22 +1223,23 @@ function renderIntel(id){
 
   requestAnimationFrame(()=>{ const arc=document.getElementById('ringArc'); if(arc){ arc.style.transition=reduce?'none':'stroke-dashoffset 1s cubic-bezier(.2,.7,.2,1)'; arc.style.strokeDashoffset=off; } });
   view.querySelectorAll('.tab').forEach(t=> t.onclick=()=>{ view.querySelectorAll('.tab').forEach(x=>x.classList.remove('on')); t.classList.add('on'); paint(id,t.dataset.tab); });
-  const sbn=document.getElementById('shareBtn'); if(sbn) sbn.onclick=()=>shareBrief(id);
   paint(id,'overview');
 }
 
-async function shareBrief(id){
-  const b=DB[id]; if(!b) return;
-  const btn=document.getElementById('shareBtn'); const old=btn?btn.innerHTML:'';
+// Share the generated PROPOSAL (the client-facing deliverable), not the research brief.
+async function shareCloser(id){
+  const b=DB[id], d=b&&b._closer; if(!d) return;
+  const btn=document.getElementById('shareCloserBtn'); const old=btn?btn.innerHTML:'';
   if(btn){ btn.disabled=true; btn.textContent='Making link…'; }
   try{
-    const r=await fetch('/api/share',{method:'POST',headers:{'Content-Type':'application/json',...(await authHeaders())},body:JSON.stringify({intel:b})});
+    const by={company:(PROFILE&&(PROFILE.company||PROFILE.name))||''};
+    const r=await fetch('/api/share',{method:'POST',headers:{'Content-Type':'application/json',...(await authHeaders())},body:JSON.stringify({intel:{name:b.name,loc:b.loc}, closer:d, kind:'closer', by})});
     const j=await r.json();
     if(btn){ btn.disabled=false; btn.innerHTML=old; }
     if(!j.ok||!j.url){ alert(j.message||'Could not create the link.'); return; }
-    const title=b.name+' — intelligence brief';
+    const title=(d.title||'Proposal')+(b.name?' — '+b.name:'');
     if(navigator.share){ try{ await navigator.share({title, text:title, url:j.url}); return; }catch(_){ return; } }
-    try{ await navigator.clipboard.writeText(j.url); alert('Link copied — paste it into a text or email:\n\n'+j.url); }catch(_){ prompt('Copy this brief link:', j.url); }
+    try{ await navigator.clipboard.writeText(j.url); alert('Proposal link copied — text or email it:\n\n'+j.url); }catch(_){ prompt('Copy this proposal link:', j.url); }
   }catch(e){ if(btn){ btn.disabled=false; btn.innerHTML=old; } alert('Could not create the link — try again.'); }
 }
 
@@ -1343,8 +1338,8 @@ function closerDoc(d){
     <div class="cl-secs">${secs}</div>
     ${price}
     ${d.cta?`<div class="cl-cta">${esc(d.cta)}</div>`:''}
-    <div class="cl-actions"><button class="cl-copy" data-copy>${I.doc} Copy deliverable</button></div>
-    ${d.deliveryTip?`<div class="cl-tip">${I.info}<span><b>Delivery tip:</b> ${esc(d.deliveryTip)}</span></div>`:''}
+    <div class="cl-actions">${window.__SHARED?'':`<button class="cl-copy cl-share" id="shareCloserBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg> Send proposal</button>`}<button class="cl-copy" data-copy>${I.doc} Copy deliverable</button></div>
+    ${(d.deliveryTip && !window.__SHARED)?`<div class="cl-tip">${I.info}<span><b>Delivery tip:</b> ${esc(d.deliveryTip)}</span></div>`:''}
   </div>`;
 }
 function closerText(d){
@@ -1369,6 +1364,7 @@ function wireCloser(id){
   const c=document.querySelector('#closerOut [data-copy]');
   if(c) c.onclick=()=>{ const d=DB[id]&&DB[id]._closer; if(!d) return;
     navigator.clipboard.writeText(closerText(d)).then(()=>{ c.innerHTML=I.check+' Copied'; setTimeout(()=>{ c.innerHTML=I.doc+' Copy deliverable'; },1600); }).catch(()=>{}); };
+  const sc=document.getElementById('shareCloserBtn'); if(sc) sc.onclick=()=>shareCloser(id);
 }
 async function runCloser(id){
   const btn=document.getElementById('closerBtn');
@@ -1545,10 +1541,25 @@ async function bootSharedBrief(tok){
   const intro=document.getElementById('intro'); if(intro) intro.remove();
   try{
     const j=await fetch('/api/shared/'+encodeURIComponent(tok)).then(r=>r.json());
-    if(!j.ok||!j.share||!j.share.intel){ view.innerHTML='<div class="pad"><div class="home-note">This brief link is no longer available. Ask your rep to resend it.</div></div>'; return; }
-    DB['shared']=j.share.intel;
+    const share=j&&j.share;
+    if(!j.ok||!share){ view.innerHTML='<div class="pad"><div class="home-note">This link is no longer available. Ask your rep to resend it.</div></div>'; return; }
+    if(share.kind==='closer' && share.closer){ renderSharedCloser(share); return; }
+    if(!share.intel){ view.innerHTML='<div class="pad"><div class="home-note">This link is no longer available.</div></div>'; return; }
+    DB['shared']=share.intel;
     renderIntel('shared');
-  }catch(e){ view.innerHTML='<div class="pad"><div class="home-note">Couldn’t load this brief — check your connection and try the link again.</div></div>'; }
+  }catch(e){ view.innerHTML='<div class="pad"><div class="home-note">Couldn’t load this — check your connection and try the link again.</div></div>'; }
+}
+// Render a shared PROPOSAL read-only (the client's view of the deliverable).
+function renderSharedCloser(share){
+  const d=share.closer, name=(share.intel&&share.intel.name)||'', by=share.by||{};
+  setChrome('Proposal','',false);
+  view.innerHTML=`<div class="iq-head"><div class="iq-top"><div>
+      <div class="iq-name">${esc(d.title||'Proposal')}</div>
+      <div class="iq-loc">${name?esc(name):''}${by.company?((name?' · ':'')+'Prepared by '+esc(by.company)):''}</div>
+    </div></div></div>
+    <div class="pad" id="closerOut">${closerDoc(d)}</div>`;
+  const c=document.querySelector('#closerOut [data-copy]');
+  if(c) c.onclick=()=>{ navigator.clipboard.writeText(closerText(d)).then(()=>{ c.innerHTML=I.check+' Copied'; setTimeout(()=>{ c.innerHTML=I.doc+' Copy deliverable'; },1600); }).catch(()=>{}); };
 }
 
 // After Stripe redirects back, confirm + clean the URL. The webhook flips the

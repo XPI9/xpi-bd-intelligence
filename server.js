@@ -334,10 +334,10 @@ function saveShares() {
 // Create a public link to a brief (rep must be signed in).
 app.post('/api/share', async (req, res) => {
   const u = await gate(req, res, 20); if (!u) return;
-  const { intel, closer } = req.body || {};
+  const { intel, closer, kind, by } = req.body || {};
   if (!intel || !intel.name) return res.status(400).json({ error: 'bad_input', message: 'Nothing to share — run a scan first.' });
   const token = crypto.randomBytes(9).toString('base64url');
-  SHARES[token] = { token, intel, closer: closer || null, at: Date.now() };
+  SHARES[token] = { token, intel, closer: closer || null, kind: kind || null, by: by || null, at: Date.now() };
   // keep the store from growing forever: cap to the most-recent 2000
   const keys = Object.keys(SHARES);
   if (keys.length > 2000) keys.sort((a, b) => SHARES[a].at - SHARES[b].at).slice(0, keys.length - 2000).forEach((k) => delete SHARES[k]);
