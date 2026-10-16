@@ -337,7 +337,7 @@ app.post('/api/share', async (req, res) => {
   const { intel, closer, kind, by } = req.body || {};
   if (!intel || !intel.name) return res.status(400).json({ error: 'bad_input', message: 'Nothing to share — run a scan first.' });
   const token = crypto.randomBytes(9).toString('base64url');
-  SHARES[token] = { token, intel, closer: closer || null, kind: kind || null, by: by || null, at: Date.now() };
+  SHARES[token] = { token, intel, closer: closer || null, kind: kind || null, by: by || null, owner: u.id, ownerEmail: u.email || '', at: Date.now() };
   // keep the store from growing forever: cap to the most-recent 2000
   const keys = Object.keys(SHARES);
   if (keys.length > 2000) keys.sort((a, b) => SHARES[a].at - SHARES[b].at).slice(0, keys.length - 2000).forEach((k) => delete SHARES[k]);
@@ -355,6 +355,54 @@ app.get('/api/shared/:token', (req, res) => {
 
 // The shared brief page — same app, renders read-only from the token.
 app.get('/p/:token', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
+
+// ---- Replies: a prospect responds to a shared proposal (routes interest back to the rep) ----
+const RESPONSES_FILE = path.join(__dirname, 'data', 'responses.json');
+let RESPONSES = [];
+try { RESPONSES = JSON.parse(fs.readFileSync(RESPONSES_FILE, 'utf8')) || []; } catch { RESPONSES = []; }
+let _rs = null;
+function saveResponses() {
+  clearTimeout(_rs);
+  _rs = setTimeout(() => { try { fs.mkdirSync(path.dirname(RESPONSES_FILE), { recursive: true }); fs.writeFileSync(RESPONSES_FILE, JSON.stringify(RESPONSES)); } catch (e) { console.error('[responses]', e); } }, 200);
+}
+const emailOk = (s) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(s || ''));
+
+// Public: a prospect replies to a shared proposal.
+app.post('/api/respond', (req, res) => {
+  const b = req.body || {};
+  const s = SHARES[b.token];
+  if (!s) return res.status(404).json({ error: 'not_found', message: 'This proposal link is no longer active.' });
+  const name = (b.name || '').toString().slice(0, 120);
+  const email = (b.email || '').toString().slice(0, 160);
+  if (name.length < 2 || !emailOk(email)) return res.status(400).json({ error: 'bad_input', message: 'Enter your name and a valid email.' });
+  const rec = {
+    id: crypto.randomBytes(6).toString('hex'), owner: s.owner || null, token: b.token,
+    prospect: (s.intel && s.intel.name) || '', title: (s.closer && s.closer.title) || 'Proposal',
+    name, email, phone: (b.phone || '').toString().slice(0, 40),
+    message: (b.message || '').toString().slice(0, 1000), choice: (b.choice || '').toString().slice(0, 160),
+    at: Date.now(), seen: false,
+  };
+  RESPONSES.push(rec);
+  if (RESPONSES.length > 5000) RESPONSES = RESPONSES.slice(-5000);
+  saveResponses();
+  console.log('[reply]', rec.prospect, '|', name, '|', email, '|', rec.choice);
+  const fwd = process.env.RESPONSE_FORWARD_URL;
+  if (fwd && typeof fetch === 'function') fetch(fwd, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...rec, to: s.ownerEmail || '', _subject: `New proposal reply — ${name} (${rec.prospect})` }) }).catch(() => {});
+  res.json({ ok: true });
+});
+
+// Authed: the rep's replies, newest first (+ unseen count).
+app.get('/api/responses', async (req, res) => {
+  const u = await gate(req, res, 20); if (!u) return;
+  const mine = RESPONSES.filter((r) => r.owner === u.id).sort((a, b) => b.at - a.at);
+  res.json({ ok: true, count: mine.length, unseen: mine.filter((r) => !r.seen).length, responses: mine.slice(0, 200) });
+});
+app.post('/api/responses/seen', async (req, res) => {
+  const u = await gate(req, res, 20); if (!u) return;
+  RESPONSES.forEach((r) => { if (r.owner === u.id) r.seen = true; });
+  saveResponses();
+  res.json({ ok: true });
+});
 
 app.use(express.static(path.join(__dirname, 'public')));
 

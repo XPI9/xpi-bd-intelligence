@@ -218,6 +218,25 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
 .bulb-quote b{font-style:normal;color:color-mix(in srgb,var(--accent) 72%,var(--faint));display:block;margin-top:5px;font-size:11.5px;letter-spacing:.04em}
 .cl-share{border-color:color-mix(in srgb,var(--accent) 45%,transparent)!important;color:var(--accent)!important;font-weight:700!important}
 body.shared #avoBtn{display:none!important}
+.reply-wrap{background:var(--surface-2,#141a24);border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line));border-radius:14px;padding:16px}
+.reply-h{font-weight:700;color:var(--text);margin-bottom:10px;font-size:15px}
+.rp-l{display:block;margin:9px 0;color:var(--faint);font-size:12.5px;font-weight:600}
+.rp-l span{font-weight:400}
+.rp-l input,.rp-l textarea,.rp-l select{width:100%;margin-top:5px;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface,#0e1420);color:var(--text);font-size:15px;box-sizing:border-box}
+.rp-l textarea{min-height:66px;resize:vertical}
+.reply-err{color:#ff8a75;font-size:13px}
+.reply-err:not(:empty){margin-bottom:6px}
+.reply-done{color:var(--accent);font-weight:700;text-align:center;padding:10px;display:flex;align-items:center;justify-content:center;gap:8px}
+.reply-done svg{width:18px;height:18px}
+.reply-banner{display:flex;align-items:center;gap:10px;background:color-mix(in srgb,var(--accent) 14%,var(--surface-2,#141a24));border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);border-radius:12px;padding:12px 14px;margin:0 0 14px;cursor:pointer}
+.reply-banner b{color:var(--accent)}
+.rep-row{background:var(--surface-2,#141a24);border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:10px}
+.rep-row .rr-top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.rep-row .rr-name{font-weight:700;color:var(--text);font-size:15px}
+.rep-row .rr-when{color:var(--faint);font-size:11.5px}
+.rep-row .rr-prospect{color:var(--accent);font-size:12px;font-weight:600;margin-top:1px}
+.rep-row .rr-line{color:var(--text);font-size:13.5px;margin-top:7px}
+.rep-row a{color:var(--accent);text-decoration:none}
 @keyframes ping{0%{transform:scale(.35);opacity:.7}100%{transform:scale(1);opacity:0}}
 .steps{margin-top:20px;display:flex;flex-direction:column;gap:2px}
 .step{display:flex;align-items:center;gap:12px;padding:11px 6px;border-radius:10px}
@@ -1018,6 +1037,7 @@ function renderHome(){
   </div>
   <div class="pad">
     ${acctRow()}
+    <div id="repliesBanner"></div>
     <div class="scanbar">
       <input id="urlIn" placeholder="Enter a website or business name…" autocomplete="off" spellcheck="false">
       <button class="btn" id="urlGo">${I.scan} Scan</button>
@@ -1052,6 +1072,33 @@ function renderHome(){
   const qf=document.getElementById('qrFile'); if(qf) qf.onchange=e=>{ const f=e.target.files&&e.target.files[0]; if(f) startQR(f); e.target.value=''; };
   const ab=byId('acctBtn'); if(ab) ab.onclick=renderAccount;
   const pb=byId('provBtn'); if(pb) pb.onclick=renderProspects;
+  loadRepliesBanner();
+}
+async function loadRepliesBanner(){
+  const el=document.getElementById('repliesBanner'); if(!el) return;
+  try{
+    const r=await fetch('/api/responses',{headers:await authHeaders()}); const j=await r.json();
+    if(!j.ok||!j.unseen){ el.innerHTML=''; return; }
+    el.innerHTML=`<div class="reply-banner" id="repliesOpen">${I.avo}<div><b>${j.unseen} new ${j.unseen===1?'reply':'replies'}</b> to your proposals — tap to view.</div></div>`;
+    document.getElementById('repliesOpen').onclick=renderReplies;
+  }catch(_){ el.innerHTML=''; }
+}
+async function renderReplies(){
+  setChrome('Proposal replies','',true);
+  view.innerHTML='<div class="pad"><div class="home-note">Loading replies…</div></div>';
+  let j={responses:[]};
+  try{ j=await (await fetch('/api/responses',{headers:await authHeaders()})).json(); }catch(_){}
+  try{ await fetch('/api/responses/seen',{method:'POST',headers:{'Content-Type':'application/json',...(await authHeaders())}}); }catch(_){}
+  const rows=(j.responses||[]).map(x=>{
+    const when=new Date(x.at).toLocaleDateString(undefined,{month:'short',day:'numeric'});
+    return `<div class="rep-row">
+      <div class="rr-top"><div><div class="rr-name">${esc(x.name)}</div>${x.prospect?`<div class="rr-prospect">re: ${esc(x.prospect)}</div>`:''}</div><div class="rr-when">${esc(when)}</div></div>
+      <div class="rr-line"><a href="mailto:${esc(x.email)}">${esc(x.email)}</a>${x.phone?` · <a href="tel:${esc(x.phone)}">${esc(x.phone)}</a>`:''}</div>
+      ${x.choice?`<div class="rr-line">Interested in: <b>${esc(x.choice)}</b></div>`:''}
+      ${x.message?`<div class="rr-line">“${esc(x.message)}”</div>`:''}
+    </div>`;
+  }).join('');
+  view.innerHTML='<div class="pad">'+(rows||'<div class="home-note">No replies yet. When a prospect responds to a proposal you sent, it shows up here.</div>')+'</div>';
 }
 function capBtn(k,lb){
   const inner=`<div class="ic">${I[k]}</div><div class="lb">${lb}</div>`;
@@ -1549,17 +1596,49 @@ async function bootSharedBrief(tok){
     renderIntel('shared');
   }catch(e){ view.innerHTML='<div class="pad"><div class="home-note">Couldn’t load this — check your connection and try the link again.</div></div>'; }
 }
-// Render a shared PROPOSAL read-only (the client's view of the deliverable).
+// Render a shared PROPOSAL read-only (the client's view) + a reply path back to the rep.
 function renderSharedCloser(share){
-  const d=share.closer, name=(share.intel&&share.intel.name)||'', by=share.by||{};
+  const d=share.closer, name=(share.intel&&share.intel.name)||'', by=share.by||{}, tok=share.token;
+  const firm=by.company?esc(by.company):'us';
+  const items=(d.pricing&&d.pricing.items)||[];
   setChrome('Proposal','',false);
   view.innerHTML=`<div class="iq-head"><div class="iq-top"><div>
       <div class="iq-name">${esc(d.title||'Proposal')}</div>
       <div class="iq-loc">${name?esc(name):''}${by.company?((name?' · ':'')+'Prepared by '+esc(by.company)):''}</div>
     </div></div></div>
-    <div class="pad" id="closerOut">${closerDoc(d)}</div>`;
+    <div class="pad" id="closerOut">${closerDoc(d)}</div>
+    <div class="pad"><div class="reply-wrap" id="replyWrap">
+      <div class="reply-h">Like what you see? Let ${firm} know.</div>
+      <button class="btn block" id="replyOpen">${I.bolt} I'm interested</button>
+    </div></div>`;
   const c=document.querySelector('#closerOut [data-copy]');
   if(c) c.onclick=()=>{ navigator.clipboard.writeText(closerText(d)).then(()=>{ c.innerHTML=I.check+' Copied'; setTimeout(()=>{ c.innerHTML=I.doc+' Copy deliverable'; },1600); }).catch(()=>{}); };
+  document.getElementById('replyOpen').onclick=()=>{
+    const w=document.getElementById('replyWrap');
+    w.innerHTML=`<div class="reply-h">Tell ${firm} you're interested</div>
+      <div class="reply-err" id="rpErr"></div>
+      <label class="rp-l">Your name<input id="rpName" autocomplete="name" placeholder="Name"></label>
+      <label class="rp-l">Email<input id="rpEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@company.com"></label>
+      <label class="rp-l">Phone <span>(optional)</span><input id="rpPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(555) 555-5555"></label>
+      ${items.length?`<label class="rp-l">Interested in<select id="rpChoice"><option value="">Not sure yet — let's talk</option>${items.map(it=>`<option value="${esc(it.label)}">${esc(it.label)}${it.amount?' — '+esc(it.amount):''}</option>`).join('')}</select></label>`:''}
+      <label class="rp-l">Message <span>(optional)</span><textarea id="rpMsg" placeholder="Anything you'd like to add"></textarea></label>
+      <button class="btn block" id="rpSend">Send to ${firm}</button>`;
+    document.getElementById('rpSend').onclick=()=>sendReply(tok,by);
+  };
+}
+async function sendReply(tok,by){
+  const name=(document.getElementById('rpName').value||'').trim(), email=(document.getElementById('rpEmail').value||'').trim();
+  const err=document.getElementById('rpErr'); err.textContent='';
+  if(name.length<2){ err.textContent='Enter your name.'; return; }
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ err.textContent='Enter a valid email.'; return; }
+  const btn=document.getElementById('rpSend'); const old=btn.innerHTML; btn.disabled=true; btn.textContent='Sending…';
+  try{
+    const body={ token:tok, name, email, phone:(document.getElementById('rpPhone').value||'').trim(), message:(document.getElementById('rpMsg').value||'').trim(), choice:((document.getElementById('rpChoice')||{}).value)||'' };
+    const r=await fetch('/api/respond',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const j=await r.json();
+    if(j.error){ err.textContent=j.message||'Could not send.'; btn.disabled=false; btn.innerHTML=old; return; }
+    document.getElementById('replyWrap').innerHTML=`<div class="reply-done">${I.check} Thanks, ${esc(name.split(/\s+/)[0])}. ${by&&by.company?esc(by.company):'The team'} will reach out shortly.</div>`;
+  }catch(e){ err.textContent='Could not send — try again.'; btn.disabled=false; btn.innerHTML=old; }
 }
 
 // After Stripe redirects back, confirm + clean the URL. The webhook flips the
