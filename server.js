@@ -8,6 +8,8 @@
 
 import 'dotenv/config';
 import express from 'express';
+import fs from 'node:fs';
+import crypto from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runResearch } from './lib/research.js';
@@ -318,6 +320,41 @@ app.post('/api/extract', async (req, res) => {
 });
 
 app.get('/pricing', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'pricing.html')));
+
+// ---- Shareable read-only brief links (text/email a prospect brief) ----
+const SHARES_FILE = path.join(__dirname, 'data', 'shares.json');
+let SHARES = {};
+try { SHARES = JSON.parse(fs.readFileSync(SHARES_FILE, 'utf8')) || {}; } catch { SHARES = {}; }
+let _ss = null;
+function saveShares() {
+  clearTimeout(_ss);
+  _ss = setTimeout(() => { try { fs.mkdirSync(path.dirname(SHARES_FILE), { recursive: true }); fs.writeFileSync(SHARES_FILE, JSON.stringify(SHARES)); } catch (e) { console.error('[shares]', e); } }, 200);
+}
+
+// Create a public link to a brief (rep must be signed in).
+app.post('/api/share', async (req, res) => {
+  const u = await gate(req, res, 20); if (!u) return;
+  const { intel, closer } = req.body || {};
+  if (!intel || !intel.name) return res.status(400).json({ error: 'bad_input', message: 'Nothing to share — run a scan first.' });
+  const token = crypto.randomBytes(9).toString('base64url');
+  SHARES[token] = { token, intel, closer: closer || null, at: Date.now() };
+  // keep the store from growing forever: cap to the most-recent 2000
+  const keys = Object.keys(SHARES);
+  if (keys.length > 2000) keys.sort((a, b) => SHARES[a].at - SHARES[b].at).slice(0, keys.length - 2000).forEach((k) => delete SHARES[k]);
+  saveShares();
+  const proto = (req.headers['x-forwarded-proto'] || 'https').toString().split(',')[0];
+  res.json({ ok: true, url: `${proto}://${req.headers['host']}/p/${token}`, token });
+});
+
+// Public read of a shared brief (no auth).
+app.get('/api/shared/:token', (req, res) => {
+  const s = SHARES[req.params.token];
+  if (!s) return res.status(404).json({ error: 'not_found' });
+  res.json({ ok: true, share: s });
+});
+
+// The shared brief page — same app, renders read-only from the token.
+app.get('/p/:token', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 
 app.use(express.static(path.join(__dirname, 'public')));
 

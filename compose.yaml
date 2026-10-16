@@ -22,6 +22,9 @@ services:
       - "8.8.8.8"
     ports:
       - "172.18.0.1:3200:3000"
+    volumes:
+      # Persist shared brief links across rebuilds.
+      - ./data-bd:/app/data
 
   # Optional white-label CORE app on its own subdomain. Uncomment to run it too.
   # xpi-bd-core:

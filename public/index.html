@@ -216,6 +216,11 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
 @keyframes bulbpop{0%{transform:scale(.8)}55%{transform:scale(1.17)}100%{transform:scale(1)}}
 .bulb-quote{max-width:360px;margin:16px auto 0;min-height:58px;color:var(--faint);font-size:13.5px;line-height:1.55;font-style:italic;text-align:center;opacity:0;transition:opacity .45s}
 .bulb-quote b{font-style:normal;color:color-mix(in srgb,var(--accent) 72%,var(--faint));display:block;margin-top:5px;font-size:11.5px;letter-spacing:.04em}
+.iq-top-r{display:flex;align-items:center;gap:8px}
+.iq-share{display:inline-flex;align-items:center;gap:6px;background:var(--accent-soft);color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);border-radius:9px;padding:7px 11px;font-size:12.5px;font-weight:700;cursor:pointer}
+.iq-share svg{width:14px;height:14px}
+.iq-share:disabled{opacity:.6}
+body.shared #avoBtn{display:none!important}
 @keyframes ping{0%{transform:scale(.35);opacity:.7}100%{transform:scale(1);opacity:0}}
 .steps{margin-top:20px;display:flex;flex-direction:column;gap:2px}
 .step{display:flex;align-items:center;gap:12px;padding:11px 6px;border-radius:10px}
@@ -1191,7 +1196,7 @@ function showError(msg){
 const TABS=[['overview','Overview'],['evidence','Evidence'],['opps','Opportunities'],['strategy','Strategy'],['closer','Closer'],['timeline','Timeline']];
 function renderIntel(id){
   const b=DB[id]; current=id;
-  setChrome('Prospect Intelligence','BD '+b.score,true);
+  setChrome('Prospect Intelligence','BD '+b.score,!window.__SHARED);
   const circ=2*Math.PI*40; const off=circ*(1-b.score/100);
   view.innerHTML=`
     <div class="iq-head">
@@ -1200,7 +1205,10 @@ function renderIntel(id){
           <div class="iq-name">${esc(b.name)}</div>
           <div class="iq-loc">${esc(b.loc)}</div>
         </div>
-        <div class="conf-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="11" height="11"><path d="M20 6L9 17l-5-5"/></svg>ID ${(b.identity*100).toFixed(0)}%</div>
+        <div class="iq-top-r">
+          ${window.__SHARED?'':`<button class="iq-share" id="shareBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Share</button>`}
+          <div class="conf-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="11" height="11"><path d="M20 6L9 17l-5-5"/></svg>ID ${(b.identity*100).toFixed(0)}%</div>
+        </div>
       </div>
       <div class="ring-wrap">
         <div class="ring">
@@ -1221,7 +1229,23 @@ function renderIntel(id){
 
   requestAnimationFrame(()=>{ const arc=document.getElementById('ringArc'); if(arc){ arc.style.transition=reduce?'none':'stroke-dashoffset 1s cubic-bezier(.2,.7,.2,1)'; arc.style.strokeDashoffset=off; } });
   view.querySelectorAll('.tab').forEach(t=> t.onclick=()=>{ view.querySelectorAll('.tab').forEach(x=>x.classList.remove('on')); t.classList.add('on'); paint(id,t.dataset.tab); });
+  const sbn=document.getElementById('shareBtn'); if(sbn) sbn.onclick=()=>shareBrief(id);
   paint(id,'overview');
+}
+
+async function shareBrief(id){
+  const b=DB[id]; if(!b) return;
+  const btn=document.getElementById('shareBtn'); const old=btn?btn.innerHTML:'';
+  if(btn){ btn.disabled=true; btn.textContent='Making link…'; }
+  try{
+    const r=await fetch('/api/share',{method:'POST',headers:{'Content-Type':'application/json',...(await authHeaders())},body:JSON.stringify({intel:b})});
+    const j=await r.json();
+    if(btn){ btn.disabled=false; btn.innerHTML=old; }
+    if(!j.ok||!j.url){ alert(j.message||'Could not create the link.'); return; }
+    const title=b.name+' — intelligence brief';
+    if(navigator.share){ try{ await navigator.share({title, text:title, url:j.url}); return; }catch(_){ return; } }
+    try{ await navigator.clipboard.writeText(j.url); alert('Link copied — paste it into a text or email:\n\n'+j.url); }catch(_){ prompt('Copy this brief link:', j.url); }
+  }catch(e){ if(btn){ btn.disabled=false; btn.innerHTML=old; } alert('Could not create the link — try again.'); }
 }
 
 function paint(id,tab){
@@ -1230,11 +1254,11 @@ function paint(id,tab){
   else if(tab==='evidence') p.innerHTML=evHTML(b);
   else if(tab==='opps') p.innerHTML=oppHTML(b);
   else if(tab==='strategy') p.innerHTML=stratHTML(b);
-  else if(tab==='closer') p.innerHTML=closerHTML(b);
+  else if(tab==='closer') p.innerHTML = window.__SHARED ? '<div class="card"><div class="card-h">Closer</div><div style="font-size:13px;color:var(--mut,#9aa3b4);line-height:1.5">This is a shared read-only brief. For the full proposal, reach out to your rep.</div></div>' : closerHTML(b);
   else if(tab==='timeline') p.innerHTML=tlHTML(b);
   if(tab==='overview'){ requestAnimationFrame(()=>{ p.querySelectorAll('.track i').forEach(el=>{ el.style.width=el.dataset.w+'%'; }); }); }
-  if(tab==='strategy'){ const ab=document.getElementById('avoBtn'); if(ab) ab.onclick=()=>runAVO(id); }
-  if(tab==='closer'){ const cb=document.getElementById('closerBtn'); if(cb) cb.onclick=()=>runCloser(id); wireCloser(id); }
+  if(tab==='strategy' && !window.__SHARED){ const ab=document.getElementById('avoBtn'); if(ab) ab.onclick=()=>runAVO(id); }
+  if(tab==='closer' && !window.__SHARED){ const cb=document.getElementById('closerBtn'); if(cb) cb.onclick=()=>runCloser(id); wireCloser(id); }
   p.scrollIntoView?null:null;
   view.scrollTop = view.scrollTop; // keep position
 }
@@ -1508,10 +1532,24 @@ fetch('/api/config').then(r=>r.json()).then(cfg=>{ SERVER_CFG={...SERVER_CFG,...
   .finally(()=>{
     setAccent(SERVER_CFG.accent);
     const mk=document.querySelector('#appbar .mark'); if(mk&&SERVER_CFG.wordmark) mk.innerHTML=SERVER_CFG.wordmark;
+    const shareTok=(location.pathname.match(/^\/p\/([A-Za-z0-9_\-]+)/)||[])[1];
+    if(shareTok){ bootSharedBrief(shareTok); return; }
     initSupabase();
     maybeBillingReturn();
     bootAccount();
   });
+
+// Open a shared brief link read-only (no sign-in needed).
+async function bootSharedBrief(tok){
+  window.__SHARED=true; document.body.classList.add('shared');
+  const intro=document.getElementById('intro'); if(intro) intro.remove();
+  try{
+    const j=await fetch('/api/shared/'+encodeURIComponent(tok)).then(r=>r.json());
+    if(!j.ok||!j.share||!j.share.intel){ view.innerHTML='<div class="pad"><div class="home-note">This brief link is no longer available. Ask your rep to resend it.</div></div>'; return; }
+    DB['shared']=j.share.intel;
+    renderIntel('shared');
+  }catch(e){ view.innerHTML='<div class="pad"><div class="home-note">Couldn’t load this brief — check your connection and try the link again.</div></div>'; }
+}
 
 // After Stripe redirects back, confirm + clean the URL. The webhook flips the
 // plan a moment later, so we give it a beat then reload the profile.
