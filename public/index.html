@@ -198,21 +198,24 @@ h1.title{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(28px
 .scanpulse .r{position:absolute;inset:0;border-radius:50%;border:2px solid var(--accent);opacity:0;animation:ping 2s ease-out infinite}
 .scanpulse .r:nth-child(2){animation-delay:.66s}
 .scanpulse .r:nth-child(3){animation-delay:1.33s}
-/* ---------- scan light bulb: flickers while working, lights solid when ready ---------- */
-.bulb{width:120px;height:120px;margin:4px auto 6px;position:relative;display:flex;align-items:center;justify-content:center}
-.bulb .glow{position:absolute;inset:-6px;border-radius:50%;background:radial-gradient(circle,var(--accent) 0%,transparent 62%);opacity:0;transition:opacity .45s}
-.bulb svg{width:66px;height:66px;position:relative;z-index:1;color:var(--faint);transition:color .35s,filter .35s}
-.bulb .filament{stroke:var(--line);transition:stroke .35s}
-.bulb.working svg{color:color-mix(in srgb,var(--accent) 55%,var(--faint));animation:bulbflick 1.15s steps(1,end) infinite}
-.bulb.working .filament{stroke:color-mix(in srgb,var(--accent) 65%,transparent);animation:bulbflick 1.15s steps(1,end) infinite}
-.bulb.working .glow{animation:bulbglow 1.15s ease-in-out infinite}
-.bulb.ready svg{color:var(--accent);filter:drop-shadow(0 0 12px var(--accent));animation:bulbpop .55s ease-out}
+/* ---------- scan light bulb: slow charge while working, ignites bright when ready ---------- */
+.bulb{width:124px;height:124px;margin:2px auto 8px;position:relative;display:flex;align-items:center;justify-content:center}
+.bulb .glow{position:absolute;inset:-8px;border-radius:50%;background:radial-gradient(circle,var(--accent) 0%,transparent 62%);opacity:0;transition:opacity .5s}
+.bulb .bulbicon{width:66px;height:66px;position:relative;z-index:2;color:var(--faint);transition:color .4s,filter .4s}
+.bulb .filament{stroke:var(--line);transition:stroke .4s}
+/* WORKING — slow, smooth "charging" breathe (unique, calm — energy gathering) */
+.bulb.working .bulbicon{color:color-mix(in srgb,var(--accent) 50%,var(--faint));animation:bulbcharge 2.4s ease-in-out infinite}
+.bulb.working .filament{stroke:color-mix(in srgb,var(--accent) 60%,transparent);animation:bulbcharge 2.4s ease-in-out infinite}
+.bulb.working .glow{animation:bulbbreathe 2.4s ease-in-out infinite}
+/* READY — ignite: solid bright + glow */
+.bulb.ready .bulbicon{color:var(--accent);filter:drop-shadow(0 0 16px var(--accent));animation:bulbpop .6s ease-out}
 .bulb.ready .filament{stroke:#fff}
-.bulb.ready .glow{opacity:.6;animation:bulbburst .55s ease-out}
-@keyframes bulbflick{0%{opacity:.45}20%{opacity:.85}45%{opacity:.35}65%{opacity:.75}85%{opacity:.5}100%{opacity:.6}}
-@keyframes bulbglow{0%,100%{opacity:.12}50%{opacity:.3}}
-@keyframes bulbpop{0%{transform:scale(.82)}55%{transform:scale(1.14)}100%{transform:scale(1)}}
-@keyframes bulbburst{0%{opacity:.85;transform:scale(.6)}100%{opacity:.6;transform:scale(1)}}
+.bulb.ready .glow{opacity:.72}
+@keyframes bulbcharge{0%{opacity:.4}50%{opacity:.9}100%{opacity:.4}}
+@keyframes bulbbreathe{0%,100%{opacity:.07}50%{opacity:.26}}
+@keyframes bulbpop{0%{transform:scale(.8)}55%{transform:scale(1.17)}100%{transform:scale(1)}}
+.bulb-quote{max-width:360px;margin:16px auto 0;min-height:58px;color:var(--faint);font-size:13.5px;line-height:1.55;font-style:italic;text-align:center;opacity:0;transition:opacity .45s}
+.bulb-quote b{font-style:normal;color:color-mix(in srgb,var(--accent) 72%,var(--faint));display:block;margin-top:5px;font-size:11.5px;letter-spacing:.04em}
 @keyframes ping{0%{transform:scale(.35);opacity:.7}100%{transform:scale(1);opacity:0}}
 .steps{margin-top:20px;display:flex;flex-direction:column;gap:2px}
 .step{display:flex;align-items:center;gap:12px;padding:11px 6px;border-radius:10px}
@@ -1090,13 +1093,27 @@ async function startCard(file){
 }
 function fileToBase64(file){ return new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(String(fr.result).split(',')[1]); fr.onerror=rej; fr.readAsDataURL(file); }); }
 
+// Soft two-note chime when the brief lights up (uses the user's scan click as the gesture).
+function bulbChime(){
+  try{
+    var Ctx=window.AudioContext||window.webkitAudioContext; if(!Ctx) return;
+    var ac=new Ctx();
+    [[880,0],[1174.66,0.13]].forEach(function(n){
+      var o=ac.createOscillator(), g=ac.createGain(); o.type='sine'; o.frequency.value=n[0];
+      var t=ac.currentTime+n[1];
+      g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.11,t+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t+0.5);
+      o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+0.55);
+    });
+    setTimeout(function(){ try{ ac.close(); }catch(_){} },1300);
+  }catch(_){}
+}
 async function showResearch({name,sub,id,dataPromise}){
   setChrome('Researching','Live',false);
   view.innerHTML=`<div class="research-wrap">
     <div class="research-head">
       <div class="bulb working" id="scanBulb" aria-hidden="true">
         <span class="glow"></span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="bulbicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M9 18h6M10 21h4"/>
           <path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>
           <path class="filament" d="M9.3 10.6l2.7 2.1 2.7-2.1" stroke-width="1.5"/>
@@ -1104,6 +1121,7 @@ async function showResearch({name,sub,id,dataPromise}){
       </div>
       <div class="rh-name">${esc(name)}</div>
       <div class="rh-sub">${esc(sub||'')}</div>
+      <div class="bulb-quote" id="bulbQuote"></div>
     </div>
     ${circuitHTML('')}
     <div class="rstatus" id="rstatus"><b>Capturing…</b></div>
@@ -1113,6 +1131,27 @@ async function showResearch({name,sub,id,dataPromise}){
   const nodes=[...view.querySelectorAll('.circuit .node')];
   const wires=[...view.querySelectorAll('.circuit .wire')];
   const status=document.getElementById('rstatus');
+  // Rotating genius quotes while the bulb pulses — it feels like it's thinking.
+  const QUOTES=[
+    {t:"The true sign of intelligence is not knowledge but imagination.",by:"Albert Einstein"},
+    {t:"Intelligence is the ability to adapt to change.",by:"Stephen Hawking"},
+    {t:"I know that I am intelligent, because I know that I know nothing.",by:"Socrates"},
+    {t:"Simple can be harder than complex: you have to work hard to get your thinking clean to make it simple.",by:"Steve Jobs"},
+    {t:"You can tell whether a man is clever by his answers. You can tell whether a man is wise by his questions.",by:"Naguib Mahfouz"},
+    {t:"Intelligent people know how to get what they want. Wise people know what's worth wanting.",by:"Shane Parrish"},
+    {t:"The test of a first-rate intelligence is the ability to hold two opposed ideas in the mind at the same time, and still retain the ability to function.",by:"F. Scott Fitzgerald"},
+    {t:"The mind is not a vessel to be filled but a fire to be kindled.",by:"Plutarch"},
+    {t:"If you know the enemy and know yourself, you need not fear a hundred battles.",by:"Sun Tzu"},
+    {t:"Chance favors the prepared mind.",by:"Louis Pasteur"},
+    {t:"In the middle of difficulty lies opportunity.",by:"Albert Einstein"},
+    {t:"Without data, you're just another person with an opinion.",by:"W. Edwards Deming"},
+    {t:"The best way to predict the future is to create it.",by:"Peter Drucker"}
+  ];
+  const qEl=document.getElementById('bulbQuote');
+  let qi=Math.floor(Math.random()*QUOTES.length);
+  function showQuote(){ if(!qEl) return; const q=QUOTES[qi%QUOTES.length]; qi++; qEl.style.opacity='0'; setTimeout(function(){ qEl.innerHTML='"'+esc(q.t)+'"<b>— '+esc(q.by)+'</b>'; qEl.style.opacity='1'; },240); }
+  qEl && (qEl.innerHTML='"'+esc(QUOTES[qi%QUOTES.length].t)+'"<b>— '+esc(QUOTES[qi%QUOTES.length].by)+'</b>', qEl.style.opacity='1', qi++);
+  const qTimer=setInterval(showQuote, 3800);
   const labels=['Capturing the business…','Researching across the web…','Collecting the evidence…','Scoring the opportunity…','Building the play…'];
   const d=reduce?60:560;
   for(let i=0;i<nodes.length;i++){
@@ -1128,10 +1167,11 @@ async function showResearch({name,sub,id,dataPromise}){
     await sleep(reduce?30:300);
   }
   while(!data && !err){ await sleep(150); }
+  clearInterval(qTimer);
   if(err){ showError(err.message||'Research failed.'); return; }
   // The brief is ready — light the bulb solid and let it land before showing the intel.
   const bulb=document.getElementById('scanBulb');
-  if(bulb){ bulb.classList.remove('working'); bulb.classList.add('ready'); if(status) status.innerHTML='<b>Brief ready.</b>'; await sleep(reduce?120:800); }
+  if(bulb){ bulb.classList.remove('working'); bulb.classList.add('ready'); if(status) status.innerHTML='<b>Brief ready.</b>'; bulbChime(); await sleep(reduce?200:1700); }
   DB[id]=data; if(id==='_live') saveProspect(data); renderIntel(id);
 }
 
