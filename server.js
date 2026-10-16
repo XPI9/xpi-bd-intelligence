@@ -387,7 +387,11 @@ app.post('/api/respond', (req, res) => {
   saveResponses();
   console.log('[reply]', rec.prospect, '|', name, '|', email, '|', rec.choice);
   const fwd = process.env.RESPONSE_FORWARD_URL;
-  if (fwd && typeof fetch === 'function') fetch(fwd, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...rec, to: s.ownerEmail || '', _subject: `New proposal reply — ${name} (${rec.prospect})` }) }).catch(() => {});
+  if (fwd && typeof fetch === 'function') {
+    const ref = process.env.PUBLIC_URL || 'https://bd.xpisolutions.com';
+    // Origin/Referer are required by FormSubmit (and harmless elsewhere) — without them it rejects server calls.
+    fetch(fwd, { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: ref, Referer: ref + '/' }, body: JSON.stringify({ name, email: rec.email, phone: rec.phone, interested_in: rec.choice, message: rec.message, prospect: rec.prospect, _subject: `New proposal reply — ${name} (${rec.prospect})`, _template: 'table' }) }).catch(() => {});
+  }
   res.json({ ok: true });
 });
 
